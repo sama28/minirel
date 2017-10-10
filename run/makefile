@@ -8,7 +8,7 @@
 
 # where to look for the files
 
-HOME = /home/samadhan/Desktop/customminirel3
+HOME = /home/ameya/Desktop/minirel
 
 INCLUDE  = $(HOME)/include
 
