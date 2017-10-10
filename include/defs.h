@@ -24,9 +24,10 @@
 //************************************************************
 //----------this part depends on where you deploy this project
 //***********************************************************
-#define HOME_MINIREL "/home/samadhan/Desktop/customminirel3"//location of project root directory
-#define MAX_PATH_LENGTH 128 						//length of absolute address of any file
+#define HOME_MINIREL "/home/ameya/Desktop/minirel"//location of project root directory
+#define MAX_PATH_LENGTH 255 						//length of absolute address of any file
 #define ATTRLEN		32
+#define MR_MAX_FILENAME_SIZE 255
 //------------------------------------------------------------------------------------------------
 //------------bit map slot specific----------------------------------------------------------
 
