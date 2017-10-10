@@ -1,0 +1,23 @@
+version(1_1)//version 1_1 is independent of 1_2and direct succession of version1
+------------------------new in version 1_1--------------------------------------------
+page sturcture is defined(fixed size bitmap,with the assumption that record size is atleast 4 byte)
+-------------common in version 1_x------------------------------------------------------------
+new #define added
+HOME_MINIREL
+MAX_PATH
+BITMS_SLOT
+-------------------
+Implementation of CreateCats (only relcat part without safety of catalog data and nothing is set in bitmapslot) ;
+------------------------------------------------------------------------------------------------------
+---------------------------------NEW IN CUSTOM MINIRE2------------------------------
+createCat(char*) is implemented 
+it create relcat ,attrcat but not data dictionary(which contains #ofRecords,)
+bitmapslot is handled properly
+1st level of catalog safety is implemented{means after 
+
+only-  
+1.[r-x   - - -  - - - (USR-GRP-OTH)] permission is given over catalog dir
+2.[r - -   - - -   - - - (USR_GRP-OTH)] permission is given over the attrcat and relcat }
+//-----------------------------------------------------------------------------------------------------------------
+[note]=>testing is not done thouroghly of customrel2 code
+//-----------------------------------------------------------------------------------------------------------------

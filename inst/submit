@@ -1,0 +1,44 @@
+
+Here are the instructions for your MINIREL project submission:
+
+1) Create a final executable called "minirel" - it should run on
+   Linux.
+ 
+2) Create a file called "listing"  - this file should contain
+   the entire project listing including documentation, header files, etc.
+   Ensure that the listing file is in structured order - that is, start
+   with the project documentation, then for each layer, have its layer
+   documentation and then club its routines together, ...
+
+3) Create a single-page file called "summary"  which describes what this
+   project is about and ALL the optimizations that you have made.  Also
+   list the features you have NOT implemented (for example, indexing).
+
+4) In your executable, ensure that you have dummy stub routines for the
+   routines that you have NOT implemented.
+
+5) Ensure that there are NO interactive parts in your code.  Further,
+   all error messages should go to stdout, not stderr.  Also,
+   the names of relcat and attrcat should be lower case.
+
+
+Then, on November 17, mail to the course account your 
+         ***********                 
+"minirel", "listing" and "summary" files (as attachments).
+
+
+The project demos will be held on November ?? afternoon from 2.00 pm onwards.
+                                  ***********
+In the demo, your MINIREL executable will be tested against a variety
+of queries.  The demos will be scheduled in one-hour slots and I will
+place a signup sheet on our lab board.  Put your (and partner's) name
+in for the desired slot.
+
+- Jayant
+                       
+
+
+
+
+
+

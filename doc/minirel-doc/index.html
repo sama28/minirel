@@ -1,0 +1,1380 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with jLaTeX2HTML 2002 (1.62) JA patch-1.4
+patched version by:  Kenshi Muto, Debian Project.
+LaTeX2HTML 2002 (1.62),
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>minirel-doc</TITLE>
+<META NAME="description" CONTENT="minirel-doc">
+<META NAME="keywords" CONTENT="minirel-doc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="jLaTeX2HTML v2002 JA patch-1.4">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="minirel-doc.css">
+
+</HEAD>
+
+<BODY >
+
+<P>
+<DIV ALIGN="CENTER">
+</DIV>
+<DIV ALIGN="CENTER"></DIV>
+<DIV ALIGN="CENTER"><FONT SIZE="+2"><B>(E0 261)  Database Management Systems 
+</B></FONT></DIV>
+<P>
+<DIV ALIGN="CENTER"><FONT SIZE="+2"><B>
+<BR>
+<BR>
+</B></FONT></DIV>
+<P>
+<DIV ALIGN="CENTER"><FONT SIZE="+2"><B> MINIREL  Project  Description
+</B></FONT>
+</DIV>
+
+<P>
+
+<H1><A NAME="SECTION00010000000000000000">
+OVERVIEW</A>
+</H1>
+In this project, you will implement a simplified single-user relational
+database system, called <B>MINIREL</B>.  The MINIREL project involves
+writing code for both the logical layer and the physical layer of the
+dbms.  For ease of implementation, the logical layer is split into two
+sub-layers, an algebra layer and a schema layer.  Therefore, the
+MINIREL architecture is a three-layer hierarchy comprised of an <B>Algebra Layer</B>, a <B>Schema Layer</B> and a <B>Physical Layer</B>.  Your
+implementation will have to reflect this hierarchy.
+
+<P>
+The Algebra Layer implements the main relational algebra constructs
+such as <I>select</I>, <I>project</I>, etc.  The Schema Layer
+implements routines that define and manipulate the database schema.
+Utility routines for manipulating relations are also included in this
+layer.  The Physical Layer implements routines which directly
+manipulate files and records through the operating system interface.
+The meta-data information is stored in <B>catalogs</B>.
+
+<P>
+You will implement MINIREL <I>bottom-up</I>, that is, starting with
+the Physical Layer, then writing the Schema Layer, and finally, the
+Algebra Layer.  We will provide a <B>front-end</B> to translate user
+dbms commands into calls to MINIREL.  This front-end will parse the
+dbms commands and call routines of your Algebra Layer and Schema Layer
+to process each command.  During program development, you should use
+the front-end for writing queries to test the correctness and
+robustness of your programs.
+
+<P>
+
+<H2><A NAME="SECTION00011000000000000000">
+Programming Environment</A>
+</H2>
+MINIREL is to be implemented in C or C++ on the Unix operating
+system.  You can develop the program on any machine you like
+but your final demo will have to execute on a Linux box.
+
+<P>
+
+<H2><A NAME="SECTION00012000000000000000">
+Project Submission</A>
+</H2>
+To help pace yourself on the MINIREL project, 
+the following 12-week schedule is recommended:
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT">Project Design:</TD>
+<TD ALIGN="LEFT">one week</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Physical Layer:</TD>
+<TD ALIGN="LEFT">three weeks</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Schema Layer:</TD>
+<TD ALIGN="LEFT">two weeks</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Algebra Layer:</TD>
+<TD ALIGN="LEFT">two weeks</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Index Routines:</TD>
+<TD ALIGN="LEFT">three weeks</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Testing:</TD>
+<TD ALIGN="LEFT">one week</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+You are expected to hand in a fully commented listing for each layer of
+your program.  A documentation template and a sample documentation is
+available in the course account.  Similarly, sample dbms command files
+are available for testing the correctness and robustness of your
+programs.  After project completion, each team will have to provide an
+online demo.
+
+<P>
+
+<H2><A NAME="SECTION00013000000000000000">
+Grading</A>
+</H2>
+The project is worth 40 percent of your final course grade.  Of
+this, less than half is for program correctness  -- the remaining
+is for documentation, style, efficiency, and <U>robustness</U>,
+so you should write <I>quality</I> code.  Typically, the team
+grade will simply be assigned to each team member.  However, in
+cases where the work distribution is noticeably skewed, we will
+adjust your individual grades accordingly.  Since questions on the
+project may appear in the exams and during the demo, make sure that
+you are familiar with the entire code.  Copying of code across
+teams will instantly result in <I>all</I> concerned failing the
+course, so it is your responsibility to prevent others from accessing
+your code.
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+THE FRONT-END</A>
+</H1>
+This section describes the front-end system (which we will provide in
+both C and C++ for a variety of architectures) and the set of commands
+that can be input by users to the front-end.  The front-end consists of
+a <I>parser</I> which parses user commands and converts them to calls
+to your logical layer (Algebra Layer + Schema Layer) routines.  The
+parser uses the standard <B>(argc, argv)</B> technique to pass
+parameters to your procedures.  All parameters passed into your
+routines are in ASCII (character string) form, so they have to be
+converted to the appropriate types before processing.  You <I>must</I>
+stick to the procedure call interface specified for the logical layer
+routines in Sections 3 and 4 in order to be able to use the front-end
+system.
+
+<P>
+The front-end verifies the <I>syntactic</I> correctness of user
+requests.  However, the front-end has no knowledge about what relations
+exist, what attributes the relations contain, or the types of their
+attributes.  Therefore, your routines must detect and deal with the
+possibility that incoming requests may make incorrect references to
+relations and attributes.  It is up to your routines to do <I>all</I>
+of the semantic error detection and handling.  Ideally, you should
+detect all semantic errors before you make any changes to the database,
+as undoing such changes will be harder than preventing them in the
+first place.  Also, you should enforce meta-data security, that is, not
+allow users to directly alter the catalogs. Finally, your routines
+should return an error code and print out <I>meaningful</I> error
+messages when errors do occur.
+
+<P>
+
+<H2><A NAME="SECTION00021000000000000000">
+USER COMMANDS</A>
+</H2>
+The commands that MINIREL users can input to the front-end are listed
+below.  The syntax of the commands is explained in the notes following
+the command list.
+
+<P>
+<DIV ALIGN="CENTER">
+</DIV>
+<DIV ALIGN="CENTER"></DIV>
+<OL>
+<LI>createdb DBNAME;
+</LI>
+<LI>destroydb DBNAME;
+</LI>
+<LI>opendb DBNAME;
+</LI>
+<LI>closedb;
+</LI>
+<LI>quit;
+</LI>
+<LI>create RELATION_NAME ( ATTR_NAME = FORMAT [ , ATTR_NAME = FORMAT ]* );
+</LI>
+<LI>destroy RELATION_NAME;
+</LI>
+<LI>load RELATION_NAME from FILENAME;
+</LI>
+<LI>print RELATION_NAME;
+</LI>
+<LI>buildindex for RELATION_NAME on ATTR_NAME;
+</LI>
+<LI>dropindex for RELATION_NAME [ on ATTR_NAME ];
+</LI>
+<LI>select into RELATION_NAME from RELATION_NAME where ( ATTR_NAME OP VALUE );
+</LI>
+<LI>project into RELATION_NAME from RELATION_NAME ( ATTR_NAME [ , ATTR_NAME ]* );
+</LI>
+<LI>join into RELATION_NAME ( RELATION_NAME . ATTR_NAME, RELATION_NAME . ATTR_NAME );
+</LI>
+<LI>insert into RELATION_NAME ( ATTR_NAME = VALUE [ , ATTR_NAME = VALUE ]* );
+</LI>
+<LI>delete from RELATION_NAME where ( ATTR_NAME OP VALUE );
+</LI>
+</OL>
+<DIV ALIGN="CENTER">
+</DIV>
+
+<P>
+<DIV ALIGN="LEFT">
+<B>NOTES
+
+</B></DIV>
+
+<OL>
+<LI>All lower case words are key words. 
+
+<P>
+</LI>
+<LI>The upper case words have the following interpretation:
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT">RELATION_NAME</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">string</TD>
+</TR>
+<TR><TD ALIGN="LEFT">ATTR_NAME</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">string</TD>
+</TR>
+<TR><TD ALIGN="LEFT">DBNAME</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">string</TD>
+</TR>
+<TR><TD ALIGN="LEFT">FORMAT</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">string</TD>
+</TR>
+<TR><TD ALIGN="LEFT">FILENAME</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">string</TD>
+</TR>
+<TR><TD ALIGN="LEFT">VALUE</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">quoted string or number</TD>
+</TR>
+<TR><TD ALIGN="LEFT">OP</TD>
+<TD ALIGN="LEFT">-</TD>
+<TD ALIGN="LEFT">comparison operators like <IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$&lt;$">, <IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$&gt;=$"> etc.</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+where
+
+<P>
+<DL>
+<DT><STRONG>  string:</STRONG></DT>
+<DD>a character set that starts with an alphabet
+and is followed by an 
+<BR>
+arbitrary number of alphabets and digits
+</DD>
+<DT><STRONG>  quoted string:</STRONG></DT>
+<DD>a string within double quotes (semicolon is
+not allowed within the quotes)
+</DD>
+<DT><STRONG>  number:</STRONG></DT>
+<DD>integer or real number
+</DD>
+<DT><STRONG>  operators:</STRONG></DT>
+<DD><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$&lt;$">, <IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$&lt;=$">, <IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$&lt;&gt;$">, <IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$&gt;$">, <IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$&gt;=$">, <IMG
+ WIDTH="16" HEIGHT="12" ALIGN="BOTTOM" BORDER="0"
+ SRC="img6.png"
+ ALT="$=$">
+</DD>
+</DL>
+
+<P>
+</LI>
+<LI>All the strings and numbers passed to the routines are in ASCII 
+<B>except</B> the comparison operators which are integer constants.
+They are as follows: 
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">OP</TD>
+<TD ALIGN="CENTER">CONSTANT</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><IMG
+ WIDTH="16" HEIGHT="12" ALIGN="BOTTOM" BORDER="0"
+ SRC="img6.png"
+ ALT="$=$"></TD>
+<TD ALIGN="CENTER">501</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$&gt;=$"></TD>
+<TD ALIGN="CENTER">502</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$&gt;$"></TD>
+<TD ALIGN="CENTER">503</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$&lt;=$"></TD>
+<TD ALIGN="CENTER">504</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$&lt;&gt;$"></TD>
+<TD ALIGN="CENTER">505</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$&lt;$"></TD>
+<TD ALIGN="CENTER">506</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+</LI>
+<LI>Terms within square brackets `[ ]' are optional. A `*' after the right
+square bracket `]' means terms within the square brackets `[ ]' can be
+repeated any number of times.
+
+<P>
+</LI>
+<LI>All commands to the front-end must end with a `;'.
+</LI>
+</OL>
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+ALGEBRA LAYER</A>
+</H1>
+This section of the handout describes the routines for the Algebra
+Layer of MINIREL, and how they are invoked by the front-end.  Each of
+the Algebra Layer routines implements a basic relational algebra
+command.  The commands are <I>select, project, join, insert,</I> and
+<I>delete</I>.  Each of these routines takes one or two relations as
+the input and yields a new relation as its result.  Result relations are
+included in the database.
+
+<P>
+
+<OL>
+<LI><I>Select(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``select''       
+<BR> <I>argv[1]</I> 		 = 		 result relation  
+<BR> <I>argv[2]</I> 		 = 		 source relation  
+<BR> <I>argv[3]</I> 		 = 		 attribute name   
+<BR> <I>argv[4]</I> 		 = 		 operator         
+<BR> <I>argv[5]</I> 		 = 		 value            
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine implements the relational selection command.  It first
+creates a result relation with the same set of attributes as the source
+relation.  It then applies the selection criterion to the records in
+the source relation, and places the selected records in the result
+relation.  In MINIREL, only one selection criterion is handled at a
+time.  The selection criterion itself is specified via the name of an
+attribute, a comparison operator, and a value.  The supported operators
+are <B><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$&lt;$"></B>, <B><IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$&gt;$"></B>, <B><IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.png"
+ ALT="$&lt;=$"></B>, <B><IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$&gt;=$"></B>, <B><IMG
+ WIDTH="16" HEIGHT="12" ALIGN="BOTTOM" BORDER="0"
+ SRC="img6.png"
+ ALT="$=$"></B>,
+and <B><IMG
+ WIDTH="29" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$&lt;&gt;$"></B>; as described in Section 2, the operators are passed
+to MINIREL by the front-end as integers.
+
+<P>
+</LI>
+<LI><I>Project (argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``project''         
+<BR> <I>argv[1]</I> 		 = 		 result relation   
+<BR> <I>argv[2]</I> 		 = 		 source relation   
+<BR> <I>argv[3]</I> 		 = 		 attribute name 1  
+<BR> <I>argv[4]</I> 		 = 		 attribute name 2  
+<BR>     . . . 		 		 . . .             
+<BR> <I>argv[argc-1]</I> 		 = 		 attribute name N  
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine implements the relational projection command.  It first
+creates the result relation with the attributes given in <I>argv</I>,
+then performs the projection.  Attributes are matched up by name, not
+by position, and the order of attributes in the result relation is the
+order specified in <I>argv</I>.  Since eliminating attributes may
+introduce duplicate tuples, your implementation must ensure that the
+duplicates are removed from the output relation. 
+
+<P>
+</LI>
+<LI><I>Join(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``join''   
+<BR> <I>argv[1]</I> 		 = 		 result relation     
+<BR> <I>argv[2]</I> 		 = 		 source relation 1   
+<BR> <I>argv[3]</I> 		 = 		 attribute name 1    
+<BR> <I>argv[4]</I> 		 = 		 source relation 2   
+<BR> <I>argv[5]</I> 		 = 		 attribute name 2    
+<BR> <I>argv[argc]</I> 		 = 		NIL
+</TT></PRE>
+
+<P>
+This routine implements the relational join command.  For simplicity,
+MINIREL only implements <I>natural join,</I> not the full join
+command.  This routine first creates the specified result relation,
+then performs a join on the two source relations based on either the <B>nested loops</B> technique or the <B>index join</B> technique.
+
+<P>
+Since natural join is implemented, the join attribute appears only
+<I>once</I> in the result relation.  The join attribute from the
+first source relation is used as the result's join attribute.  The
+result relation's attribute order is:  <I>source 1 attributes</I>
+(including the join attribute) followed by <I>source 2 attributes</I>.
+While joins on unlike field types (e.g., an integer field and a
+string field) are errors, strings of different lengths are accepted
+as being of the same type for the purpose of performing joins.
+Finally, you must deal with the possibility that the two source
+relations may have one or more attributes with the same name --
+devise an attribute renaming scheme to resolve such conflicts.
+Note, however, that the join attribute should <I>not</I> be renamed.
+
+<P>
+</LI>
+<LI><I>Insert(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``insert''               
+<BR> <I>argv[1]</I> 		 = 		 relation name            
+<BR> <I>argv[2]</I> 		 = 		 attribute name 1         
+<BR> <I>argv[3]</I> 		 = 		 attribute value 1        
+<BR>     . . . 		 		  . . .                   
+<BR> <I>argv[argc-2]</I> 		 = 		 attribute name N         
+<BR> <I>argv[argc-1]</I> 		 = 		 attribute value N        
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine implements the relational insert command, adding the
+tuple given in <I>argv</I> to the named relation.  Since the input
+values are in ASCII, the appropriate conversion is performed before
+entering into the database.  Attributes are matched up by name,
+not by their order.  The length of incoming string-type data is
+regulated by padding with NULLs if too short, or truncating if too
+long.  Make sure that adding the tuple does not introduce a duplicate.
+If the attribute set is incorrectly specified, an error message
+should be generated.
+
+<P>
+</LI>
+<LI><I>Delete(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``delete''       
+<BR> <I>argv[1]</I> 		 = 		 source relation  
+<BR> <I>argv[2]</I> 		 = 		 attribute name   
+<BR> <I>argv[3]</I> 		 = 		 operator         
+<BR> <I>argv[4]</I> 		 = 		 value            
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine implements the relational delete command.  It is similar
+to <I>Select</I>, but it deletes the specified records from the source
+relation instead of placing them in a result relation.  You should be
+able to implement this routine quickly by copying your <I>Select</I>
+code and then making a few changes to it.
+</LI>
+</OL>
+
+<P>
+Note: <U>If appropriate indexes exist, MINIREL
+should use them to process the above operations efficiently</U>.
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+SCHEMA LAYER</A>
+</H1>
+
+<P>
+In the Schema Layer, MINIREL implements routines that form part of
+the logical layer and deal with schema definition and manipulation.
+Utility routines for printing the contents of relations, loading
+relations from binary data files, and building indexes on relations,
+are also included in this layer.  This section describes each of
+the routines in the Schema Layer.  Each routine is called by the
+front-end or by Algebra Layer routines with <I>(argc, argv)</I>
+parameters (as in the Algebra Layer).
+
+<P>
+
+<OL>
+<LI><I>CreateDB(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``createdb''  
+<BR> <I>argv[1]</I> 		 = 		 database name 
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine creates a new database.  It creates the relation and
+attribute catalogs and loads them with the appropriate initial
+information. You should check that the given database directory does
+not already exist.
+
+<P>
+</LI>
+<LI><I>DestroyDB(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``destroydb''   
+<BR> <I>argv[1]</I> 		 = 		 database name   
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine first checks that the database has been closed.
+If it is not closed, it closes it and then destroys the database.
+
+<P>
+Note: Only the files and directories related to the specified database
+should be destroyed, without affecting other databases.
+
+<P>
+</LI>
+<LI><I>OpenDB(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``opendb''    
+<BR> <I>argv[1]</I> 		 = 		 database name 
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine opens a database for subsequent use. It  changes the
+working directory to be the database directory, opens the catalogs and
+initializes the various global data structures that are used by other
+MINIREL routines.
+
+<P>
+</LI>
+<LI><I>CloseDB(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``closedb'' 
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine closes the currently opened database and changes
+the working directory to the original directory from which MINIREL
+was invoked.
+
+<P>
+</LI>
+<LI><I>Quit()</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``quit'' 
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine first checks that the database has been closed.  If
+it is not closed, it closes it and then terminates the programs.
+
+<P>
+Note: For CreateDB, DestroyDB, and OpenDB, assume that the full path
+name is given in the database name parameter.  At the end of the query
+interaction, your program should <U>return</U>
+to the directory from which you invoked MINIREL.
+
+<P>
+</LI>
+<LI><I>Create(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``create''             
+<BR> <I>argv[1]</I> 		 = 		 relation name          
+<BR> <I>argv[2]</I> 		 = 		 first attribute name   
+<BR> <I>argv[3]</I> 		 = 		 first attribute format 
+<BR>     . . . 		 		   . . .                
+<BR> <I>argv[argc-2]</I> 		 = 		 Nth attribute name     
+<BR> <I>argv[argc-1]</I> 		 = 		 Nth attribute format   
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine creates a new relation with the specified name and
+attributes.  Relation names and attribute names should not be more than
+20 characters long (including the NULL that terminates them), and you
+must enforce this.  The format for each attribute is one of three --
+``i'' for integer, ``f'' for floating point, or ``sN'' for character
+string of maximum length N (where N is a string of digits).  The upper
+bound on N is 50.  It is an error to create a relation that already
+exists.
+
+<P>
+The routine creates a Unix file for the relation and makes appropriate
+entries in the catalogs.  It adds a record to the relation catalog
+describing the new relation, and adds records to the attribute catalog
+for all the attributes of the new relation.
+
+<P>
+</LI>
+<LI><I>Destroy(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``destroy''    
+<BR> <I>argv[1]</I> 		 = 		 relation name  
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine removes the specified relation from the database.
+Information about the relation is removed from the catalogs as well,
+and the associated Unix file is deleted.
+
+<P>
+</LI>
+<LI><I>Load(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``load''       
+<BR> <I>argv[1]</I> 		 = 		 relation name  
+<BR> <I>argv[2]</I> 		 = 		 data file name 
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine loads the specified relation, which must already have been
+created, with data from the specified file (the full path name of the
+file will be provided).  Data files are in binary
+format as a sequence of data records -- the difference between a data
+file and a relation is that the data file has nothing in it except the
+data itself, whereas a relation has additional page structure (for
+example, the slot maps).  The sizes and types of the fields of the
+incoming records are ascertained by consulting the catalog information
+for the relation being loaded.  It is an error to attempt to
+load data into a relation that is not empty.  You may assume that the
+input file will not contain duplicate tuples.
+
+<P>
+</LI>
+<LI><I>Print(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``print''       
+<BR> <I>argv[1]</I> 		 = 		 relation name   
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine prints out the contents of the specified relation in the
+form of a table.  The attribute values must be printed in a 
+nice formatted way. 
+
+<P>
+</LI>
+<LI><I>BuildIndex(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``buildindex''   
+<BR> <I>argv[1]</I> 		 = 		 relation name  
+<BR> <I>argv[2]</I> 		 = 		 attribute name        
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine creates a B+ tree index on the given attribute
+for the specified relation.  To simplify the implementation, 
+it is required that the desired indexes on a relation be
+created before any tuples are loaded.  That is, the BuildIndex
+command should appear before the corresponding Load command.
+
+<P>
+</LI>
+<LI><I>DropIndex(argc, argv)</I>:
+<PRE><TT>
+ <I>argv[0]</I> 		 = 		 ``dropindex''   
+<BR> <I>argv[1]</I> 		 = 		 relation name  
+<BR> <I>argv[2]</I> 		 = 		 attribute name        
+<BR> <I>argv[argc]</I> 		 = 		 NIL
+</TT></PRE>
+
+<P>
+This routine destoys the index on the given attribute for the
+specified relation.  If no attribute name is specified, the
+routine destroys <I>all</I> the indexes existing on the relation.
+
+<P>
+</LI>
+</OL>
+
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+PHYSICAL LAYER</A>
+</H1>
+The Physical Layer consists of routines that manage files of records,
+since each relation in the database is stored as a file. This
+section describes the structure of files and records, and the
+meta-data catalogs.
+
+<P>
+
+<H2><A NAME="SECTION00051000000000000000">
+Files and Records</A>
+</H2>
+For this project, all the records in each file have the same size.
+(Different files may have different record sizes, of course.) In
+MINIREL, files and records are implemented in the following manner:
+All files are structured as Unix files and each file consists of a
+number of pages depending on the number of records in the relation.
+Each page has several control fields plus a sequence of slots for
+storing records.  The control fields include a <I>slot use map</I>,
+with one bit per record slot, indicating whether each slot is ``in
+use'' (has a record stored in it) or ``free'' (has no record currently
+stored in it).  Record identifiers (RID's) are represented as 4-byte
+values -- the upper 2 bytes are the page number and the lower 2 bytes
+are the record slot number within the page.  A page identifier is
+represented as a RID with a nil (0) value in its record number portion,
+and nil page identifiers have 0's in both portions.  The actual number
+of records per page depends on how the relation's record size compares
+to the size of a page.  MINIREL uses <I>PAGESIZE</I> = 512 as the
+operating assumption.  Records should not cross page boundaries.
+
+<P>
+
+<H2><A NAME="SECTION00052000000000000000">
+Catalogs</A>
+</H2>
+A relational database has a number of catalogs that are used for
+storing meta-data information about relations, attributes, secondary
+indexes, views, user access privileges, etc.  In MINIREL, a
+<I>relation catalog</I> is used for storing information about relations
+in the database, and an <I>attribute catalog</I> is used for storing
+information about attributes of each relation.  These catalogs are
+themselves implemented as relations.
+
+<P>
+
+<H3><A NAME="SECTION00052100000000000000">
+Relation Catalog</A>
+</H3>
+You should design the set of attributes for the relation catalog.
+A required minimal set of attributes is given below:
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>relName</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Name of the relation described by this catalog record</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>recLength</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Length of the relation's records, in bytes</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>recsPerPg</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Number of records per page for the relation</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>numAttrs</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Number of attributes for the relation</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>numRecs</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Number of records currently in the relation</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>numPgs</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Number of pages in the relation</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+Since the relation catalog is itself a relation, it should contain, as its
+first record, a description of itself!  The relation catalog 
+is called <B>relcat</B>.
+The second record in the relation catalog is for the attribute catalog,
+which is called <B>attrcat</B>.
+
+<P>
+
+<H3><A NAME="SECTION00052200000000000000">
+Relation Cache</A>
+</H3>
+In addition to storing the above information, it is important for
+achieving reasonable performance to have this information quickly
+accessible for all currently open relations.  For this reason, MINIREL
+maintains an array of relation catalog entries of current interest in
+main memory, that is, a <I>relation catalog cache</I>.  
+No more than <I>MAXOPEN</I> = 20 relations are allowed to be open at the same
+time.  Cache entries contain all of the fields from the relation
+catalog records, <I>plus</I> the following information:
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>relcatRid</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">RID for record holding this relation catalog record</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>relFile</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">File descriptor for the open relation</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>dirty</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Set to true if the corresponding catalog record on disk
+becomes outdated</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>attrList</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">Linked list of attribute descriptors</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+When a relation is opened, its relation catalog record is copied into
+the cache for easy access.  The <I>relcatRid</I> for the entry is
+saved to make it easy to update (if necessary)
+the relation catalog record on disk
+when the relation is subsequently closed.  The <I>dirty</I>
+field is set to true if the cached version of the entry changes, and it
+is false until then.  If this value is true when the relation is
+closed, the relation catalog record on disk is updated before the cache entry
+is reused.  The <I>relFile</I> field is used to store the Unix file
+descriptor while the file is open.  The role of the
+last field, <I>attrList</I>, is explained in Section 5.2.4.
+
+<P>
+After a relation is opened, MINIREL routines typically use the array
+index into the cache for the relation, called its <B>relation
+number</B>, for quick access of information about the relation.  You are
+free to add, to the cache record structure, any additional information
+that will result in performance enhancements.
+
+<P>
+
+<H3><A NAME="SECTION00052300000000000000">
+Attribute Catalog</A>
+</H3>
+The attribute catalog is analogous to the relation catalog -- it
+contains a record for <I>every</I> attribute in <I>every</I> relation
+in the database, including both the relation catalog and itself.  You
+should design the set of fields for the attribute catalog.  A required 
+minimal set of attributes is given below:
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>offset</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">offset of attribute within record</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>length</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">length of attribute</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>type</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">attribute type:  ``i'', ``f'', or ``s''</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>attrName</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">name of attribute</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>relName</I></TD>
+<TD ALIGN="LEFT">--</TD>
+<TD ALIGN="LEFT">name of relation</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00052400000000000000">
+Attribute Cache</A>
+</H3>
+MINIREL makes the attribute information for open files readily
+available by cacheing this information in the same place that it
+caches their relation catalog information -- in the relation cache.
+Since the number of attributes that relations have is not fixed,
+a linked list of attribute catalog entries is built.  When a relation
+is opened, the attribute catalog is searched and the information
+for each of its attributes is read, adding each one in turn to the
+list in the relation's cache entry.
+
+<P>
+
+<H2><A NAME="SECTION00053000000000000000">
+Buffer Management</A>
+</H2>
+MINIREL uses an array of memory buffers for storing pages on their
+way to and from the disk.  There is <I>one buffer per open
+relation</I>, so the buffer pool is indexed by the <I>relation
+number</I> of the relation.  The page processing routines operate
+using the buffers.  When a page is requested, it is either found
+in the buffer associated with the relation being read, or else it
+is read in after replacing the page currently in the buffer (writing
+it to disk first if it's <I>dirty</I>).  Finally, when a relation
+is closed, if it still has a <I>dirty</I> page in the buffer pool,
+that page is written to disk before the close is performed.
+
+<P>
+You are free to use a few additional buffers if needed in the
+implementation.  However, these should be limited in number - in
+particular, you <U>cannot</U> assume that entire relations
+or entire indexes can be brought into memory.
+
+<P>
+
+<H2><A NAME="SECTION00054000000000000000">
+Command Description</A>
+</H2>
+The physical layer involves writing a set of routines to manipulate the
+catalogs, files, pages and records.
+These routines are described in detail below.
+
+<P>
+
+<H3><A NAME="SECTION00054100000000000000">
+Catalog Routines</A>
+</H3>
+
+<OL>
+<LI><I>CreateCats()</I> -- Create the system catalogs
+and place entries in the catalogs for the catalogs themselves.
+</LI>
+<LI><I>OpenCats()</I> -- Open the system catalogs 
+and place their entries into the catalog caches.
+Initialize the buffer pool control fields.
+</LI>
+<LI><I>CloseCats()</I> -- Close the system catalogs (after closing
+any remaining open relations).
+</LI>
+</OL>
+
+<P>
+
+<H3><A NAME="SECTION00054200000000000000">
+File Routines</A>
+</H3>
+
+<OL>
+<LI><I>OpenRel(relName)</I> -- Open relation <I>relName</I> and return its
+relation number.
+
+<BR>
+char *relName - Name of the relation to be opened.
+</LI>
+<LI><I>CloseRel(relNum)</I> -- Close the relation identified by <I>relNum</I>
+(after writing to disk any changes in its buffer page or in its cached
+catalog information).
+
+<BR>
+int relNum - Relation number.
+</LI>
+<LI><I>FindRelNum(relName)</I> -- Find the relation number of relation
+<I>relName</I> if it is currently open.
+
+<BR>
+char *relName - Name of the relation to be found in the cache.
+</LI>
+</OL>
+
+<P>
+
+<H3><A NAME="SECTION00054300000000000000">
+Page Routines</A>
+</H3>
+
+<OL>
+<LI><I>ReadPage(relNum, pid)</I> -- Read page <I>pid</I> of the open
+relation specified by <I>relNum</I> and place the resulting <I>PAGESIZE</I>
+bytes in the open relation's buffer slot.
+Of course, if the page is already in the buffer, then don't actually
+read it.
+
+<BR>
+int relNum - Relation number.
+
+<BR>
+short pid - Page identifier.
+</LI>
+<LI><I>FlushPage(relNum)</I> -- Flush the open relation's buffer pool page.  This
+involves writing the page to disk if it's <I>dirty</I>, then marking the buffer
+page as being clean.
+
+<BR>
+int relNum - Relation number.
+</LI>
+</OL>
+Note: Only the page routines should use I/O calls provided by C.
+All record routines should
+use the page routines as their I/O primitives.
+
+<P>
+
+<H3><A NAME="SECTION00054400000000000000">
+Record Routines</A>
+</H3>
+
+<OL>
+<LI><I>InsertRec(relNum, recPtr)</I> -- Insert the record whose contents
+is pointed at by <I>recPtr</I> into relation <I>relNum</I>.
+<I>Do not</I> simply do a sequential scan of a file when you need
+to find a slot to insert a new record.  Your solution must be
+more sophisticated, so that its performance will not be terrible.
+
+<BR>
+int relNum - Relation number.
+
+<BR>
+char *recPtr - A pointer to a record-sized byte array whose contents will
+be copied to an empty record slot in the relation.
+</LI>
+<LI><I>GetNextRec(relNum, startRid, foundRid, recPtr)</I> -- Similar
+to <I>FindRec</I>,
+but without the search criteria specification.  Simply find the next record in
+the file (for sequential scan purposes).
+
+<BR>
+int relNum - Relation number.
+
+<BR>
+Rid *startRid - The record identifier from which to begin the search for
+the next record.  The search will begin with the first 
+record <I>after</I> startRid.
+
+<BR>
+Rid *foundRid - The record identifier of
+the first record after the one specified by startRid. 
+If no record is found in the relation which follows 
+startRid, foundRid will be returned with a null value.
+
+<BR>
+char *recPtr - A pointer to a record-sized byte array into which the contents 
+of the next record (if any) will be put.
+</LI>
+<LI><I>FindRec(relNum, startRid, foundRid, recPtr, attrType, attrSize,
+attrOffset, valuePtr, compOp)</I> -- Starting at record <I>startRid</I> 
+in relation <I>relNum</I>, find the RID of the next
+record that meets the specification and put it in <I>foundRid</I>;
+if none is found, return <I>foundRid</I> = 0.  Also, put the
+contents of the record found into the byte array pointed at by
+<I>recPtr</I>.  The specification is that the value of the given
+attribute (of type <I>attrType</I>, size <I>attrSize</I>, and
+offset <I>attrOffset</I>) satisfies the relationship specified by
+the comparison operator, <I>compOp</I>, with the value pointed to
+by <I>valuePtr</I>.  If <I>startRid</I> is 0, find the RID of
+first matching record in the file.
+
+<BR>
+int relNum - Relation number.
+
+<BR>
+Rid *startRid - The record identifier from which to begin the search for
+the record with the given attribute.  The search will begin
+with the first record <I>after</I> startRid.
+
+<BR>
+Rid *foundRid - The record identifier of
+the first record after that specified by startRid which 
+has the attribute described by attrType, attrSize, 
+attrOffset, and valuePtr. If no matching record is found
+in the relation, foundRid will be returned with value null.
+
+<BR>
+char *recPtr - A pointer to a record-sized byte array into which the contents
+of the matching record (if any) will be put.
+
+<BR>
+char attrType - The data type (integer, float, or string)
+of the search attribute.
+
+<BR>
+int attrSize - The length of the search attribute, in bytes.
+
+<BR>
+int attrOffset - The offset into the record at which the search
+attribute is located.
+
+<BR>
+char *valuePtr - A pointer to a byte array which contains
+the search value.
+
+<BR>
+int compOp - Comparison operator. 
+</LI>
+<LI><I>WriteRec(relNum, recPtr, recRid)</I> -- Make the record-sized
+byte array pointed at by <I>recPtr</I> to be the new contents of record
+<I>recRid</I> in relation <I>relNum</I>.
+
+<BR>
+int relNum - Relation number.
+
+<BR>
+char *recPtr - A pointer to a record-sized byte array which contains the 
+new contents of the record.
+
+<BR>
+Rid *recRid - The record identifier of the record which is to be updated.
+</LI>
+<LI><I>DeleteRec(relNum, recRid)</I> -- Delete record <I>recRid</I> from relation
+<I>relNum</I>.
+
+<BR>
+int relNum - Relation number.
+
+<BR>
+Rid *rid - The record identifier of the record which is to be deleted.
+</LI>
+</OL>
+
+<P>
+
+<H2><A NAME="SECTION00055000000000000000">
+Index Routines</A>
+</H2>
+MINIREL uses indexing to speed up execution of queries.  The indexes
+are based on <IMG
+ WIDTH="28" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img7.png"
+ ALT="$B^+$"> trees, with each index represented by a Unix file
+and each tree node represented by a page in the file.  You should
+implement key search, insert and delete operations on the index, as
+well as index maintenance operations such as splitting and merging of
+nodes (recursively up the tree if necessary).
+
+<P>
+The structure of the index files and their manipulation routines are to
+be designed by you.  The detailed description given in this document of
+the design methodology for the other parts of MINIREL will help you in
+this process.
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+Error Handling</A>
+</H1>
+You should make your software as robust as possible.  Check the return
+values on all routine calls and report any errors via appropriate error
+messages if anything goes wrong.  Basically, your code should be fairly
+bullet-proof, and it should certainly never fail in a way that could
+compromise the data in the database!
+
+<P>
+All error messages are printed by <B>one</B> central error routine, the
+<I>ErrorMsgs</I> routine.  This routine is implemented as part of the
+Physical Layer and has the following minimal interface:
+
+<P>
+
+<P>
+<BR>
+
+<P>
+
+ <I>ErrorMsgs(errorNum, printFlag)</I>
+
+<BR>
+int errorNum - Error message number.
+
+<BR>
+int printFlag - Print out the error message if non-zero.
+
+<P>
+
+<P>
+<BR>
+
+<P>
+All errors should have numbers, and these numbers should be
+declared as constants in a definition module that all of your
+modules import.  The <I>ErrorMsgs</I> routine is
+called when leaving routines in which an error has occurred -- the
+call is of the form ``return(<I>ErrorMsgs(...)</I>)''.  If <I>printFlag</I> 
+is true, the routine prints an error message and
+then returns the value <I>errorNum</I>;  otherwise it just
+returns <I>errorNum</I>.
+
+<P>
+The error messages must be <I>helpful</I>, that is, they
+should convey to the user not only what the problem is, but also
+suggest possible solutions for fixing the problem.
+
+<P>
+
+<H1><A NAME="SECTION00070000000000000000">
+Implementation Notes</A>
+</H1>
+
+<OL>
+<LI>C aligns record fields on word boundaries.  You need
+to take this alignment into account while computing sizes of structures.
+</LI>
+<LI>Make full use of the typecasting feature of C.
+</LI>
+<LI>Although users should not be allowed to directly modify the meta-data,
+they should be allowed to <I>view</I> this information through the 
+logical layer routines.
+</LI>
+<LI>Implement the indexing routines <I>after</I> you have completed
+the basic code in all three layers.
+</LI>
+<LI>The names of the catalogs and their attributes
+should be <I>exactly</I> as specified in Section 5.2.
+</LI>
+<LI>Ensure that there are no interactive parts in your code.  Also,
+all error messages should go to <I>stdout</I>, not <I>stderr</I>.
+</LI>
+<LI>For the prespecified minimal set of attributes of the 
+catalogs, you should use <U>exactly</U> the same names (including
+case) as specified in Sections 5.2.1 and 5.2.3  . 
+</LI>
+</OL>
+
+<P>
+
+<H1><A NAME="SECTION00080000000000000000">
+Documentation</A>
+</H1>
+Your MINIREL software should be <U>well-documented</U>.
+Documentation includes program documentation, layer documentation,
+module documentation, function documentation, and in-line
+documentation.
+
+<P>
+
+<P>
+<BR>
+
+<P>
+For program documentation, write up a one page summary which
+describes the project, the input/output interface, the optimizations
+that have been incorporated, etc.  Also list what you have NOT
+implemented (for example, indexing).
+
+<P>
+
+<H1><A NAME="SECTION00090000000000000000">
+Course Files</A>
+</H1>
+All the project-related files are in&nbsp; 
+<A NAME="tex2html1"
+  HREF="http://dsl.serc.iisc.ernet.in/~course/SW/MINIREL/">this location</A>.
+
+<P>
+The following files are available, with their locations
+as shown:
+
+<OL>
+<LI>Project description files  (MINIREL/doc)
+</LI>
+<LI>Front-end files  (MINIREL/frontend)
+</LI>
+<LI>Basic include files  (MINIREL/include)
+</LI>
+<LI>Execution files  (MINIREL/run)
+</LI>
+<LI>Sample makefiles  (MINIREL/template)
+</LI>
+<LI>Program documentation example files  (MINIREL/template)
+</LI>
+<LI>Sample query files  (MINIREL/query)
+</LI>
+<LI>Binary data files  (MINIREL/data/binary)
+</LI>
+<LI>Ascii version of data files  (MINIREL/data/ascii)
+</LI>
+</OL>
+
+<P>
+
+<P><P>
+<BR>
+
+<P>
+
+<P>
+The frontend (parser) is MINIREL/frontend/FES.o .  In order to use
+the parser, you need a main program.  This is MINIREL/run/main.c .
+To create your final minirel executable, a sample makefile is
+available in MINIREL/run.  If you invoke <I>make minirel</I> with
+this makefile, it links together the object files from each layer
+with the parser and the main program, and creates an executable
+called <I>minirel</I>. Your queries will be run on this executable.
+Note that MINIREL is a <U>single</U> Unix process.
+
+<P>
+Sample data files are in MINIREL/data/binary and sample query files
+are in MINIREL/query.  To enable you to check that your <I>Load</I>
+routine is correctly reading in the binary data files, the ascii
+equivalents of these data files are provided in MINIREL/data/ascii.
+
+<P>
+
+<H1><A NAME="SECTION000100000000000000000">
+Final Remarks</A>
+</H1>
+Read through this document <U>several</U> times and make sure
+you have a full understanding of the complete project <I>before</I>
+you start writing your code and designing your data structures.
+Discuss all design decisions with your partner to ensure that your
+code integrates cleanly.  Split the project work with your partner
+<I>vertically</I>, not on a layer basis.  You are encouraged to make
+additions and improvements to the implementation method suggested
+here (for example, by adding fields to the catalog cache), so long
+as you meet the basic interface specifications.
+
+<BR>
+<BR>
+Good luck!
+
+<P>
+<BR><HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,7 @@
+The project description file is proj.tex, its formatted version is
+proj.dvi, and its printable (Postscript) version is proj.ps.  To
+view the file, use previewers such as xdvi or ghostscript for the
+formatted and Postscript versions, respectively.  To print the
+file, use the lrpr command after making the necessary payment
+at the SERC office.
+
