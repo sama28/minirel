@@ -5,16 +5,16 @@
 		CONSTANTS
 *************************************************************/
 
-#define PAGESIZE			2048000					/* number of bytes in a page */
-#define BITMS_NUM            (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
-#define	MAXRECORD		(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
+#define PAGESIZE			2048				/* number of bytes in a page */
+#define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
+#define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
 #define   PGTAIL_SPACE		4 				//sapce always left blanks for safety
 
 #define RELNAME		32	/* max length of a relation name */
-#define MAXOPEN	20  	/* max number of files that can be open
+#define MAXOPEN		20  	/* max number of files that can be open
                                    		at the same time */
 
-#define	OK		0		/* return codes */
+#define	OK			0		/* return codes */
 #define NOTOK		-1
 
 #define RELCAT		"relcat"   /* name of the relation catalog file */
