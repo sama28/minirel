@@ -1,12 +1,11 @@
-<<<<<<< HEAD
+
 #include "include/defs.h"
 #include "include/error.h"
 #include "include/globals.h"
-=======
-#include "/home/samadhan/Desktop/git/minirel/include/defs.h"
-#include "/home/samadhan/Desktop/git/minirel/include/error.h"
-#include "/home/samadhan/Desktop/git/minirel/include/globals.h"
->>>>>>> fe85ac0cbf63dfcd9a7ccf59c13a0abb9b328cb9
+//#include "include/defs.h"
+#include "include/error.h"
+#include "include/globals.h"
+
 #include <sys/stat.h> 
 //------------------------------------
 //for errno and EEXIST
@@ -27,13 +26,8 @@
 int main()
 {
 		Page pg;
-<<<<<<< HEAD
 		char path[MAX_PATH_LENGTH]="data/a/catalog/relcat";
 		char path1[MAX_PATH_LENGTH]="data/a/catalog/attrcat";
-=======
-		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/new2/catalog/relcat";
-		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/new2/catalog/attrcat";
->>>>>>> fe85ac0cbf63dfcd9a7ccf59c13a0abb9b328cb9
 		//chmod(path,S_IRUSR|S_IWUSR|S_IRUSR|S_IXUSR|O_DIRECTORY);			
 		chmod(path,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
 		chmod(path1,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);

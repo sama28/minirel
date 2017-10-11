@@ -4,7 +4,7 @@
 /*************************************************************
 		CONSTANTS
 *************************************************************/
-
+#include<stdio.h>
 #define PAGESIZE			2048				/* number of bytes in a page */
 #define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
 #define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
@@ -19,7 +19,7 @@
 
 #define RELCAT		"relcat"   /* name of the relation catalog file */
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
-
+#define MR_RELCACHE_SIZE (2*PAGESIZE/sizeof(struct relList))
 
 //************************************************************
 //----------this part depends on where you deploy this project
@@ -51,3 +51,23 @@ typedef struct ps {
 	} Page;
 
 /*****************************************************************/
+
+typedef struct relList{
+	char valid;
+	char relName[RELNAME];
+	unsigned int recLength;
+	unsigned int recPerPg;
+	unsigned int numPgs;
+	unsigned int numRecs;
+	unsigned short numAttrs;
+	FILE *relFile;
+	char dirty;
+	struct attrList* attrHead;
+}relCacheEntry;
+
+typedef struct attrList{
+	char attrName[ATTRLEN];
+	unsigned length;
+	unsigned short type;
+	struct attrList* next;
+}
