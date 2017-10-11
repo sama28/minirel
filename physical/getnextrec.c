@@ -14,5 +14,5 @@ GetNextRec(int relNum,recid * startRid,recid* foundRid,void * recPtr)
 
 
 
-        //relCache[relNum].startRid
+        //relCache[relNum].startRid->pid;
 }
