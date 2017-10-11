@@ -3,6 +3,7 @@
         "errno.h": "c",
         "error.h": "c",
         "stdio.h": "c",
-        "defs.h": "c"
+        "defs.h": "c",
+        "globals.h": "c"
     }
 }
