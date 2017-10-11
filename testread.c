@@ -1,6 +1,6 @@
-#include "/home/samadhan/Desktop/customminirel3/include/defs.h"
-#include "/home/samadhan/Desktop/customminirel3/include/error.h"
-#include "/home/samadhan/Desktop/customminirel3/include/globals.h"
+#include "include/defs.h"
+#include "include/error.h"
+#include "include/globals.h"
 #include <sys/stat.h> 
 //------------------------------------
 //for errno and EEXIST
@@ -21,8 +21,8 @@
 int main()
 {
 		Page pg;
-		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/customminirel3/data/aftgit/catalog/relcat";
-		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/customminirel3/data/aftgit/catalog/attrcat";
+		char path[MAX_PATH_LENGTH]="data/a/catalog/relcat";
+		char path1[MAX_PATH_LENGTH]="data/a/catalog/attrcat";
 		//chmod(path,S_IRUSR|S_IWUSR|S_IRUSR|S_IXUSR|O_DIRECTORY);			
 		chmod(path,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
 		chmod(path1,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
@@ -64,7 +64,7 @@ int main()
 			for(i=0;i<BITMS_NUM;i++)
 			{
 				fread(&e,4,1,fd);
-				printf("\n%x",e);
+				printf("\n%u\t%d",e,sizeof(e));
 			}
 
 			fread(d,32,1,fd);

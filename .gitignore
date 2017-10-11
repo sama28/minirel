@@ -39,3 +39,4 @@ schema/print.o
 schema/quit.o
 schema/SCHEMA.o
 schema/sort.o
+a.out
