@@ -69,9 +69,9 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 	
 		for(int i =0 ;i<BITMS_NUM;i++)
 		{
-			pg.slotmap[i]=0x0000;
+			pg.slotmap[i]=0x00000000;
 		}
-		pg.slotmap[0]=0xc000;//setting 1st 2 bit of bitmap slot to 1, 
+		pg.slotmap[0]=0xc0000000;//setting 1st 2 bit of bitmap slot to 1, 
 		//for record slot num1 =1(correspnds relcat)
 		//for record slot num2 =1(correspnds attrcat)
 		printf("\nvalue of 1st bitmap slot is in decimal %d in octal %o",pg.slotmap[0],pg.slotmap[0]);
@@ -224,12 +224,12 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//since total 12 records are going to be added in the attrcat hence
 			//setting the 1st 12 bit of bitmap to 1;  
 
-			pg.slotmap[0]=0xfff0;//hex=1111 1111 1111 0000
+			pg.slotmap[0]=0xfff00000;//hex=1111 1111 1111 0000
 			fwrite(&(&pg)->slotmap[0],s[7],1,fda);	//writing bitmap
 			
 			for(i = 1 ;i<BITMS_NUM;i++)
 			{
-				pg.slotmap[i]=0x0000;
+				pg.slotmap[i]=0x00000000;
 				fwrite(&(&pg)->slotmap[i],s[7],1,fda);	//writing bitmap
 			}
 
