@@ -16,10 +16,10 @@
 #define MR_PGPERREL 10
 #define	OK			0		/* return codes */
 #define NOTOK		-1
-
+#define MR_RELCATENTRYSIZE 58
 #define RELCAT		"relcat"   /* name of the relation catalog file */
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
-#define MR_RELCACHE_SIZE (2*PAGESIZE/sizeof(struct relList))
+#define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/MR_RELCATENTRYSIZE)
 
 //************************************************************
 //----------this part depends on where you deploy this project
@@ -59,14 +59,20 @@ typedef struct relList{
 	unsigned int numPgs;
 	unsigned int numRecs;
 	unsigned short numAttrs;
+	struct recid Rid;
 	FILE *relFile;
 	char dirty;
 	struct attrList* attrHead;
+<<<<<<< HEAD
 } relCacheEntry;
+=======
+};
+>>>>>>> ac69ead8193bdd60c61036d82812ee403f44b307
 
 typedef struct attrList{
 	char attrName[ATTRLEN];
 	unsigned length;
+	unsigned offset;
 	unsigned short type;
 	struct attrList* next;
 };

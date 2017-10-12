@@ -4,7 +4,7 @@
 #define DTCHAR 					1
 #define DTUNSIGNED_CHAR 		2
 #define DTSHORT 				3
-#define DTSIGNED_SHORT			3
+#define DTSIGNED_SHORT			3 
 #define DTSIGNED_SHORT_INT		3
 #define DTUNSIGNED_SHORT		4
 #define DTINT					5

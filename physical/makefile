@@ -22,11 +22,11 @@ CFLAGS = -g $(DFLAG) -I$(INCLUDE)
 # "#ifdef" for more details
 
 SRCS = \
-	error.c createcats.c opencats.c closecats.c openrel.c closerel.c findrelnum.c \
+	error.c createcats.c filesize.c opencats.c closecats.c openrel.c closerel.c findrelnum.c \
 	readpage.c flushpage.c writerec.c findrec.c getnextrec.c insertrec.c deleterec.c
 
 OBJ = \
-	error.o createcats.o opencats.o closecats.o openrel.o closerel.o findrelnum.o \
+	error.o createcats.o filesize.o opencats.o closecats.o openrel.o closerel.o findrelnum.o \
 	readpage.o flushpage.o writerec.o findrec.o getnextrec.o insertrec.o deleterec.o
 
 #############################################################
