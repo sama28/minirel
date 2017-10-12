@@ -55,7 +55,7 @@ void cachePopulate2(FILE* relcatFile, FILE* attrcatFile){
     int smallFile=(size-PGTAIL_SPACE-BITMS_NUM*sizeof(unsigned int))/sizeof(struct relList);
     if(smallFile>NUM_RELCACHE_ENTRY)
         smallFile=NUM_RELCACHE_ENTRY;
-    for(int i=relCacheIndex;i<NUM_RELCACHE_ENTRY;i++){
+    for(int i=relCacheIndex;i<smallFile;i++){
         fread(&relCache[i].relName,32,1,relcatFile);
         fread(&relCache[i].recLength,4,1,relcatFile);
         fread(&relCache[i].recPerPg,4,1,relcatFile);
@@ -151,9 +151,10 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     
     for(int j=0;j<2;j++){
     for(int i=0;i<relCache[j].numAttrs;i++){
-        struct attrList* tmp=returnAttrNode(relCache[0].attrHead,i);
+        struct attrList* tmp=returnAttrNode(relCache[j].attrHead,i);
         printf("%s %u %u %u\n",tmp->attrName,tmp->offset,tmp->length,tmp->type);
     }printf("\n");}
+
     fread(&attrcatRid.pid,4,1,relcatFile);
     fread(&attrcatRid.slotnum,4,1,relcatFile);
     cachePopulate2(relcatFile,attrcatFile);
