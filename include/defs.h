@@ -16,10 +16,10 @@
 
 #define	OK			0		/* return codes */
 #define NOTOK		-1
-
+#define MR_RELCATENTRYSIZE 58
 #define RELCAT		"relcat"   /* name of the relation catalog file */
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
-#define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/sizeof(struct relList))
+#define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/MR_RELCATENTRYSIZE)
 
 //************************************************************
 //----------this part depends on where you deploy this project

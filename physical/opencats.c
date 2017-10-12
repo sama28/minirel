@@ -55,7 +55,7 @@ void cachePopulate2(FILE* relcatFile, FILE* attrcatFile){
     int smallFile=(size-PGTAIL_SPACE-BITMS_NUM*sizeof(unsigned int))/sizeof(struct relList);
     if(smallFile>NUM_RELCACHE_ENTRY)
         smallFile=NUM_RELCACHE_ENTRY;
-    for(int i=relCacheIndex;i<smallFile;i++){
+    for(int i=relCacheIndex;i<NUM_RELCACHE_ENTRY;i++){
         fread(&relCache[i].relName,32,1,relcatFile);
         fread(&relCache[i].recLength,4,1,relcatFile);
         fread(&relCache[i].recPerPg,4,1,relcatFile);
