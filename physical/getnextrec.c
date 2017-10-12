@@ -4,7 +4,6 @@
 #include "../include/globals.h"
 #include "../include/mrdtypes.h"
 
-<<<<<<< HEAD
 GetNextRec(int relNum,recid * startRid,recid* foundRid,void * recPtr)
 {
  printf("GetNextRec \n ");
@@ -17,5 +16,3 @@ GetNextRec(int relNum,recid * startRid,recid* foundRid,void * recPtr)
 
         //relCache[relNum].startRid->pid;
 }
-=======
->>>>>>> ac69ead8193bdd60c61036d82812ee403f44b307

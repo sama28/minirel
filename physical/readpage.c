@@ -3,6 +3,7 @@
 #include "../include/error.h"
 #include "../include/globals.h"
 #include "../include/mrdtypes.h"
+
 ReadPage(int relNum,unsigned pid)
 {
 /*    //dependent code that comes here
