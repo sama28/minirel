@@ -19,7 +19,7 @@
 
 #define RELCAT		"relcat"   /* name of the relation catalog file */
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
-#define MR_RELCACHE_SIZE (2*PAGESIZE/sizeof(struct relList))
+#define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/sizeof(struct relList))
 
 //************************************************************
 //----------this part depends on where you deploy this project
@@ -60,14 +60,16 @@ typedef struct relList{
 	unsigned int numPgs;
 	unsigned int numRecs;
 	unsigned short numAttrs;
+	struct recid Rid;
 	FILE *relFile;
 	char dirty;
 	struct attrList* attrHead;
-}relCacheEntry;
+};
 
 typedef struct attrList{
 	char attrName[ATTRLEN];
 	unsigned length;
+	unsigned offset;
 	unsigned short type;
 	struct attrList* next;
 }

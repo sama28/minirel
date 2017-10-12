@@ -11,14 +11,15 @@ int	argc;
 char	**argv;
 
 {
-    /* print command line arguments */
-    short	k;		/* iteration counter	    */
+    printf("%s",relCache[0].relName);
+    /* print command line arguments 
+    short	k;	
     printf ("%s:\n", argv[0]);
     for (k = 1 ; k < argc; ++k)
 	printf ("\targv[%d] = %s\n", k, argv[k]);
 
      printf("Create \n");
-     return (OK);  /* all's fine */
+     return (OK); */
 }
 
 
