@@ -8,12 +8,12 @@
 #define PAGESIZE			2048				/* number of bytes in a page */
 #define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
 #define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
-#define   PGTAIL_SPACE		4 				//sapce always left blanks for safety
+#define PGTAIL_SPACE		4 				//sapce always left blanks for safety
 
 #define RELNAME		32	/* max length of a relation name */
 #define MAXOPEN		20  	/* max number of files that can be open
                                    		at the same time */
-
+#define MR_PGPERREL 10
 #define	OK			0		/* return codes */
 #define NOTOK		-1
 
@@ -42,7 +42,6 @@ typedef struct recid {
 	unsigned 	slotnum;
 } Rid;
 
-
 /* Page Structure */
 typedef struct ps {
 
@@ -63,11 +62,18 @@ typedef struct relList{
 	FILE *relFile;
 	char dirty;
 	struct attrList* attrHead;
-}relCacheEntry;
+} relCacheEntry;
 
 typedef struct attrList{
 	char attrName[ATTRLEN];
 	unsigned length;
 	unsigned short type;
 	struct attrList* next;
+};
+struct pageBuffer
+{
+	int lastptr=0;
+	int dirty[MR_PGPERREL];
+	unsigned page[MR_PGPERREL];//-1 will show no page
+	ps[MR_PGPERREL];
 }
