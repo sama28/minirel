@@ -11,7 +11,7 @@ int	argc;
 char	**argv;
 
 {
-    printf("%s",relCache[0].relName);
+  //   printf("%s",relCache[0].relName);
     /* print command line arguments 
     short	k;	
     printf ("%s:\n", argv[0]);
@@ -20,6 +20,8 @@ char	**argv;
 
      printf("Create \n");
      return (OK); */
-}
+    allocatePg("relName",2);
+
+    }
 
 

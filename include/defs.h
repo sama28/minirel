@@ -11,20 +11,23 @@
 #define PGTAIL_SPACE		4 				//sapce always left blanks for safety
 
 #define RELNAME		32	/* max length of a relation name */
-#define MAXOPEN		20  	/* max number of files that can be open
-                                   		at the same time */
+#define MAXOPEN		20  /* max number of files that can be open
+										   at the same time */
+										   
+#define MR_MAXBUFPG 1024										   
 #define MR_PGPERREL 10
 #define	OK			0		/* return codes */
 #define NOTOK		-1
 #define MR_RELCATENTRYSIZE 58
 #define RELCAT		"relcat"   /* name of the relation catalog file */
+#define MR_RELCAT_REC_SIZE 58
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
 #define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/MR_RELCATENTRYSIZE)
 
 //************************************************************
 //----------this part depends on where you deploy this project
 //***********************************************************
-#define HOME_MINIREL "/home/ameya/Desktop/minirel"//location of project root directory
+#define HOME_MINIREL "/home/samadhan/Desktop/git/minirel"//location of project root directory
 #define MAX_PATH_LENGTH 255 						//length of absolute address of any file
 #define ATTRLEN		32
 #define MR_MAX_FILENAME_SIZE 255
@@ -45,7 +48,7 @@ typedef struct recid {
 /* Page Structure */
 typedef struct ps {
 
-	unsigned slotmap[BITMS_NUM];
+	unsigned  char slotmap[BITMS_NUM];
 	char contents [MAXRECORD];
 	} Page;
 
@@ -63,11 +66,7 @@ typedef struct relList{
 	FILE *relFile;
 	char dirty;
 	struct attrList* attrHead;
-<<<<<<< HEAD
 } relCacheEntry;
-=======
-};
->>>>>>> ac69ead8193bdd60c61036d82812ee403f44b307
 
 typedef struct attrList{
 	char attrName[ATTRLEN];
@@ -76,6 +75,7 @@ typedef struct attrList{
 	unsigned short type;
 	struct attrList* next;
 };
+/*
 struct pageBuffer
 {
 	int lastptr=0;
@@ -83,3 +83,11 @@ struct pageBuffer
 	unsigned page[MR_PGPERREL];//-1 will show no page
 	ps[MR_PGPERREL];
 }
+*/
+struct buffCat
+{
+	//char relName[RELNAME];//implicitly known
+	//unsigned pid;			//implicitly know
+	unsigned gtpage;
+	int dirty;
+};

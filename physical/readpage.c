@@ -6,10 +6,10 @@
 
 ReadPage(int relNum,unsigned pid)
 {
-/*    //dependent code that comes here
-     //if(relNum is available in relCache)       
+    //dependent code that comes here
+     if(relNum < relCacheIndex)//relNum is available in relCache)       
         {
-            find(pid in PGBUFF[relNum]);
+            findPgInBuff(relNum,pid)//find pid in PGBUFF[relNum])
             if (pid availble in PGBUFF)
             {
                 do nothing..........
@@ -26,9 +26,16 @@ ReadPage(int relNum,unsigned pid)
         {
 
         }
-
-
-
 */
  printf("ReadPage \n ");
+}
+
+//--------------------------------
+//--buffer management related-----
+int findPgInBuff(int relNum,unsigned pid )
+{
+    if(relNum < relCacheIndex)
+    {
+        
+    }
 }

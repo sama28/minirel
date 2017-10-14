@@ -23,11 +23,11 @@ CFLAGS = -g $(DFLAG) -I$(INCLUDE)
 
 SRCS = \
 	error.c createcats.c filesize.c opencats.c closecats.c openrel.c closerel.c findrelnum.c \
-	readpage.c flushpage.c writerec.c findrec.c getnextrec.c insertrec.c deleterec.c
+	readpage.c flushpage.c writerec.c findrec.c getnextrec.c insertrec.c deleterec.c buffmanage.cpp
 
 OBJ = \
 	error.o createcats.o filesize.o opencats.o closecats.o openrel.o closerel.o findrelnum.o \
-	readpage.o flushpage.o writerec.o findrec.o getnextrec.o insertrec.o deleterec.o
+	readpage.o flushpage.o writerec.o findrec.o getnextrec.o insertrec.o deleterec.o buffmanage.o
 
 #############################################################
 # 	stuff to build the executables
