@@ -1,11 +1,8 @@
-
 #include "include/defs.h"
 #include "include/error.h"
 #include "include/globals.h"
-//#include "include/defs.h"
 #include "include/error.h"
 #include "include/globals.h"
-
 #include <sys/stat.h> 
 //------------------------------------
 //for errno and EEXIST
@@ -25,9 +22,9 @@
 
 int main()
 {
-		Page pg;
-		char path[MAX_PATH_LENGTH]="data/a/catalog/relcat";
-		char path1[MAX_PATH_LENGTH]="data/a/catalog/attrcat";
+		PageRelCat pg;
+		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/cat6/catalog/relcat";
+		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/cat6/catalog/attrcat";
 		//chmod(path,S_IRUSR|S_IWUSR|S_IRUSR|S_IXUSR|O_DIRECTORY);			
 		chmod(path,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
 		chmod(path1,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
@@ -38,10 +35,12 @@ int main()
 		long offset=sizeof(pg.slotmap);
 		char c[RELNAME]="reName";
 		char d[RELNAME],b[32];
+		int atcatofst;
 		Rid recid;
 
 		unsigned int e,f,x=5,y=6,nr,np;
 		unsigned short g,z=7;
+		unsigned char e1;
 		int i;
 		if(fd>0)
 		{
@@ -54,22 +53,22 @@ int main()
 		*/		
 		//printf("\nfile opened successfully fd= %d,offset=%d",fd,offset);//debug code			
 		//	fseek(fd,offset,SEEK_SET);			
-				
-/*			fseek(fd,0,SEEK_SET);
-			for(i=0;i<24;i++)
+			printf("\ndirect 4 byte result");				
+			fseek(fd,0,SEEK_SET);
+			for(i=0;i<30;i++)
 			{
-				fread(&e,4,1,fd);
-				printf("\n%x",e);
+				fread(&e1,1,1,fd);
+				printf("\n%x",e1);
 			}
-*/
+			printf("\n------------");
 			//fread(b,32,1,fd);
 			
 			printf("\nbitmap of relcat");
 			fseek(fd,0,SEEK_SET);
-			for(i=0;i<BITMS_NUM;i++)
+			for(i=0;i<MR_RELCAT_BITMS_NUM;i++)
 			{
-				fread(&e,4,1,fd);
-				printf("\n%u\t%d",e,sizeof(e));
+				fread(&e1,1,1,fd);
+				printf("\n%x",e1);
 			}
 
 			fread(d,32,1,fd);
@@ -110,14 +109,16 @@ int main()
 			//-----------------------
 			*/
 			fseek(fda,0,SEEK_SET);
-				for(i=0;i<BITMS_NUM;i++)
+				for(i=0;i<MR_ATTRCAT_BITMS_NUM;i++)
 				{
-					fread(&e,4,1,fda);
-					printf("\n%x",e);
+					fread(&e1,1,1,fda);
+					printf("\n%x",e1);
 				}
+				atcatofst=(PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1);
+				fseek(fda,atcatofst,SEEK_SET);
 			for(i=0;i<12;i++)
 			{
-				fseek(fda,BITMS_NUM*4+i*42,SEEK_SET);						
+										
 				fread(d,32,1,fda);
 				fread(&e,4,1,fda);
 				fread(&f,4,1,fda);
@@ -131,4 +132,6 @@ int main()
 		{
 			printf("file can not be oppened fd %d errno %d",fd,errno);//debug code	
 		}
+
+
 }

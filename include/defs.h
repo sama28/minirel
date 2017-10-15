@@ -18,9 +18,13 @@
 #define MR_PGPERREL 10
 #define	OK			0		/* return codes */
 #define NOTOK		-1
+
+#define MR_RELCAT_BITMS_NUM   ((PAGESIZE-PGTAIL_SPACE)/(8*MR_RELCAT_REC_SIZE+1)) 
+#define MR_ATTRCAT_BITMS_NUM  ((PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1))
+#define MR_RELCAT_REC_SIZE 58
+#define	MR_ATTRCAT_REC_SIZE 42
 #define MR_RELCATENTRYSIZE 58
 #define RELCAT		"relcat"   /* name of the relation catalog file */
-#define MR_RELCAT_REC_SIZE 58
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
 #define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/MR_RELCATENTRYSIZE)
 
@@ -52,6 +56,17 @@ typedef struct ps {
 	char contents [MAXRECORD];
 	} Page;
 
+typedef struct psrelcat {
+		
+			unsigned char slotmap[MR_RELCAT_BITMS_NUM];//
+			char contents [MAXRECORD];
+			} PageRelCat;
+
+typedef struct psattrcat {
+				
+					unsigned char slotmap[MR_ATTRCAT_BITMS_NUM];//
+					char contents [MAXRECORD];
+} PageAttrCat;
 /*****************************************************************/
 
 typedef struct relList{

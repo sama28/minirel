@@ -41,19 +41,22 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 		char readrel[RELNAME];
 		unsigned recLength;//size=s[1]
 		unsigned recPerPg;//size=s[2]
-		unsigned short   numAttrs;//size=s[3]
+		unsigned short numAttrs;//size=s[3]
 		unsigned numpages;//size=s[8]
 		unsigned numrecs;//size=s[9]
 		unsigned  s[10];
 		int i;
 		Rid recid;//s[5]//corresponding to ,the rid of 1st attribute of relcat, in attrCats	
-		Page pg;//s[4]
+		PageRelCat pg;//s[4]
+		PageAttrCat pg1;
+
+		unsigned int bitmssize;
 
 	//size of relcat attribute------------------
 		s[0]=sizeof(relName);
 		s[1]=sizeof(recLength);
-		s[3]=sizeof(numAttrs);
 		s[2]=sizeof(recPerPg);
+		s[3]=sizeof(numAttrs);
 		//--------------------
 		s[5]=sizeof(recid.pid);
 		s[6]=sizeof(recid.slotnum);
@@ -61,16 +64,21 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 		s[8]=sizeof(numpages);
 		s[9]=sizeof(numrecs);
 	//-------------------------------------------------
-		s[4]=sizeof(pg.slotmap);//bitmap size
+		//s[4]=sizeof(pg.slotmap);//bitmap size priveously used
+		bitmssize=(PAGESIZE-PGTAIL_SPACE)/(8*MR_RELCAT_REC_SIZE+1);
+		s[4]=bitmssize;
 		//----------------this memory space wastage (in array s[7]) could be saved -------
 		
-		s[7]=sizeof(pg.slotmap[0]);//size of slot of bitmap(which nothing but unsigned int)
-	
-		for(int i =0 ;i<BITMS_NUM;i++)
+		s[7]=sizeof(pg.slotmap[0]);//size of slot of bitmap(which nothing but unsigned char)
+	//----------------------------------------------	
+		
+		//previously used
+		//for(int i =0 ;i<bitmssize;i++)
+		for(int i =0 ;i<MR_RELCAT_BITMS_NUM;i++) 
 		{
-			pg.slotmap[i]=0x00000000;
+			pg.slotmap[i]=0x00;
 		}
-		pg.slotmap[0]=0xc0000000;//setting 1st 2 bit of bitmap slot to 1, 
+		pg.slotmap[0]=0xc0;//setting 1st 2 bit of bitmap slot to 1, 
 		//for record slot num1 =1(correspnds relcat)
 		//for record slot num2 =1(correspnds attrcat)
 		printf("\nvalue of 1st bitmap slot is in decimal %d in octal %o",pg.slotmap[0],pg.slotmap[0]);
@@ -78,9 +86,9 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 		numrecs=2;//attrcat+relcat
 		numAttrs=8;
 		recid.pid=0;		//this shows 1st atrribute of this relation(relcat) is at page 0; 
-		recid.slotnum=0;	////this shows 1st atrribute of this relation(relcat) is at slotnum=0; in attrcat 
+		recid.slotnum=0;	////this shows 1s(t atrribute of this relation(relcat) is at slotnum=0; in attrcat 
 		recLength=s[0]+s[1]+s[2]+s[3]+s[5]+s[6]+s[8]+s[9];		
-		recPerPg=(PAGESIZE-PGTAIL_SPACE-s[4])/recLength;
+		recPerPg=s[4]*8;//(PAGESIZE-PGTAIL_SPACE-s[4])/recLength;
 		//recPerPg=(PAGESIZE - (space intentionally left blank in ech page) -bitmap size)/recLemgth
 		
 		//printf("\n s0 %d s1 %d s2 %d s3 %d s4 %d recLength = %d,recPerPg=%d",s[0],s[1],s[2],s[3],s[4],recLength,recPerPg);
@@ -166,17 +174,20 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//----------WRITTING data of relcat relation TO relcat(its own data to itself)-----
 			//relcat(relName,recLength,rcPerPg,numPgs,numRecs,numAttrs,pid,rid)
 			
-			//fwrite(buf,4*BITMS_NUM,1,fd);
+			//fwrite(buf,4*MR_RELCAT_BITMS_NUM,1,fd);
 			//printf("file opened successfully fd= %d,offset=%d",fd,offset);//debug code	
 					
-			//offset=s[4];//size of bitmapslot;	
+			//
 			//fseek(fd,offset,SEEK_SET); //setting pointer to 1st Record slot (just one byte after bitmap)		
 			
-			for(int i = 0 ;i<BITMS_NUM;i++)
+			for(int i = 0 ;i<MR_RELCAT_BITMS_NUM;i++)
 			{
 				fwrite(&(&pg)->slotmap[i],s[7],1,fd);	//writing bitmap
 			}
 
+			offset=s[4];//size of bitmapslot;	
+			fseek(fd,offset,SEEK_SET); //setting pointer to 1st Record slot (just one byte after bitmap)		
+			
 			fwrite(relName,s[0],1,fd);
 			//fread(readrel,32,1,fd);
 			//printf("\n%d data written to file and read back is %s",len,readrel);
@@ -223,12 +234,14 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//since total 12 records are going to be added in the attrcat hence
 			//setting the 1st 12 bit of bitmap to 1;  
 
-			pg.slotmap[0]=0xfff00000;//hex=1111 1111 1111 0000
+			pg1.slotmap[0]=0xff;//hex=1111 1111 
+			pg1.slotmap[1]=0xf0;//1111 0000
 			fwrite(&(&pg)->slotmap[0],s[7],1,fda);	//writing bitmap
-			
-			for(i = 1 ;i<BITMS_NUM;i++)
+			fwrite(&(&pg)->slotmap[1],s[7],1,fda);	//writing bitmap
+
+			for(i = 2 ;i<MR_ATTRCAT_BITMS_NUM;i++)
 			{
-				pg.slotmap[i]=0x00000000;
+				pg1.slotmap[i]=0x00;
 				fwrite(&(&pg)->slotmap[i],s[7],1,fda);	//writing bitmap
 			}
 
@@ -241,7 +254,10 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			ofst=0;
 			attrl=7;
 			type=DTSTRING;
-			
+
+			//-----------------------------------------------------------
+			s[4]=(PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1);//bitmap size in byte
+			//----------------------------------------------------------------
 			fseek(fda,s[4],SEEK_SET);//setting fd to 1st record slot of attrcat
 			fwrite(name,as[0],1,fda);
 			fwrite(&ofst,as[1],1,fda);	
