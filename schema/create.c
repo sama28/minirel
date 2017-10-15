@@ -20,7 +20,7 @@ char	**argv;
 
      printf("Create \n");
      return (OK); */
-    allocatePg("relName",2);
+//    allocatePg("relName",2);
 
     }
 

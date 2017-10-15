@@ -1,3 +1,6 @@
+/*
+
+
 //------cumpulsory header--------------
 #include "../include/defs.h"
 #include "../include/error.h"
@@ -28,7 +31,7 @@ unsigned allocatePg(char relName[],unsigned pid)
     gtCat.insert(key_val_Pair(relName,gPgEntry));
     print
     printf("the page to which relation %s belong is %u",relName,gtCat[relName]);
-*/
+
 
 //Test Code Not Useful Written By samadhan
 
@@ -54,3 +57,5 @@ ht[c]=htbucket1;
    printf("content is :-%s  4 %u %d",c,ht[c][5].gtPage,ht[c][5].dirty);
 }
 //initFreePgList()
+
+*/

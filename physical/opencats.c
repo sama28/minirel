@@ -1,3 +1,4 @@
+/*
 #include "../include/defs.h"
 #include "../include/error.h"
 #include "../include/globals.h"
@@ -182,7 +183,7 @@ OpenCats()
         fread(buffer,sizeof(unsigned int),PAGESIZE/sizeof(unsigned int),relcatFile);
         size=fileSize(relcatFile);
         for(int i=0;i<size/(sizeof(unsigned int));i++)
-            printf("%x\n",buffer[i]);*/
+            printf("%x\n",buffer[i]);
         
         //fread(&slot_buffer,BITMS_NUM*sizeof(unsigned int),1,relcatFile);
         
@@ -208,5 +209,6 @@ OpenCats()
           printf("\n---------------------------------------------------\n");
           printf("Error opening database.\n%s---------------------------\n",strerror(errno));
           printf("\n---------------------------------------------------\n");
-      }*/
+      }
 }
+*/

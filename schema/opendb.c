@@ -31,7 +31,9 @@ char	**argv;
       strcpy(MR_CURR_DB,argv[1]);
       printf("\n---------------------------------------------------\n");
       printf("Database %s is opened successfully.---------------------\n",MR_CURR_DB);
-      printf("\n---------------------------------------------------\n");OpenCats();
+      printf("\n---------------------------------------------------\n");
+      
+      //OpenCats();
 
     }
     else{

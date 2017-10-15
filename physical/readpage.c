@@ -1,3 +1,4 @@
+/*
 //------cumpulsory header--------------
 #include "../include/defs.h"
 #include "../include/error.h"
@@ -26,7 +27,7 @@ ReadPage(int relNum,unsigned pid)
         {
 
         }
-*/
+
  printf("ReadPage \n ");
 }
 
@@ -39,3 +40,5 @@ int findPgInBuff(int relNum,unsigned pid )
         
     }
 }
+
+*/

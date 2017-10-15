@@ -4,6 +4,8 @@
         "error.h": "c",
         "stdio.h": "c",
         "defs.h": "c",
-        "globals.h": "c"
+        "globals.h": "c",
+        "unordered_map": "cpp",
+        "unistd.h": "c"
     }
 }
