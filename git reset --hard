@@ -1,0 +1,21 @@
+[33mfbbd98b[m HEAD@{0}: pull -r: checkout fbbd98bf56007c4f49270ba30cb6cd683a656bc1
+[33m4e2d959[m HEAD@{1}: commit: noe
+[33m9f9f5cf[m HEAD@{2}: commit: correct cat dynamic space allocation design
+[33me52486b[m HEAD@{3}: commit: none
+[33mc883c1d[m HEAD@{4}: commit: nothing new
+[33m06749d5[m HEAD@{5}: commit: cahnges of ameya
+[33m5c3e520[m HEAD@{6}: pull: Merge made by the 'recursive' strategy.
+[33mae15064[m HEAD@{7}: commit (merge): none
+[33mcb8eb52[m HEAD@{8}: commit: t
+[33m1984bd6[m HEAD@{9}: commit: kjk
+[33m9b2d478[m HEAD@{10}: commit: nothing
+[33mdc3d068[m HEAD@{11}: pull: Fast-forward
+[33md3551ec[m HEAD@{12}: commit: 8B
+[33mb012ea8[m HEAD@{13}: commit: samadhan
+[33m096f594[m HEAD@{14}: pull: Fast-forward
+[33mfe85ac0[m HEAD@{15}: commit: createcat 8byte read
+[33m75fd9ca[m HEAD@{16}: commit (merge): 2
+[33m1e0efdf[m HEAD@{17}: commit: push
+[33m43d8e9d[m HEAD@{18}: commit: push
+[33m4a01892[m HEAD@{19}: pull: Fast-forward
+[33me2a8341[m HEAD@{20}: clone: from https://github.com/sama28/minirel.git

@@ -23,8 +23,8 @@
 int main()
 {
 		PageRelCat pg;
-		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/cat6/catalog/relcat";
-		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/cat6/catalog/attrcat";
+		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/cat7/catalog/relcat";
+		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/cat7/catalog/attrcat";
 		//chmod(path,S_IRUSR|S_IWUSR|S_IRUSR|S_IXUSR|O_DIRECTORY);			
 		chmod(path,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
 		chmod(path1,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
