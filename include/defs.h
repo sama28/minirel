@@ -14,7 +14,8 @@
 #define MAXOPEN		20  /* max number of files that can be open
 										   at the same time */
 										   
-#define MR_MAXBUFPG 1024										   
+//#define MR_MAXBUFPG 1024	
+
 #define MR_PGPERREL 10
 #define	OK			0		/* return codes */
 #define NOTOK		-1
@@ -51,9 +52,9 @@ typedef struct recid {
 
 /* Page Structure */
 typedef struct ps {
-
-	unsigned  char slotmap[BITMS_NUM];
-	char contents [MAXRECORD];
+//	unsigned  char slotmap[BITMS_NUM];
+	unsigned 	pid;
+	char contents [PAGESIZE];
 	} Page;
 
 typedef struct psrelcat {
