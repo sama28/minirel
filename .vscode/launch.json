@@ -6,7 +6,7 @@
                 "name": "(gdb) Launch",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "/home/samadhan/Desktop/customminirel2/run/minirel",
+                "program": "/home/samadhan/Desktop/git/minirel/run/a.out",
                 "args": [],
                 "stopAtEntry": false,
                 "cwd": "${workspaceRoot}",

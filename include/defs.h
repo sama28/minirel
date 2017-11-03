@@ -5,7 +5,7 @@
 		CONSTANTS
 *************************************************************/
 #include<stdio.h>
-#define PAGESIZE			2048				/* number of bytes in a page */
+#define PAGESIZE			1024				/* number of bytes in a page */
 #define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
 #define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
 #define PGTAIL_SPACE		4 				//sapce always left blanks for safety
@@ -27,6 +27,7 @@
 #define MR_RELCATENTRYSIZE 58
 #define RELCAT		"relcat"   /* name of the relation catalog file */
 #define ATTRCAT		"attrcat"  /* name of the attribute catalog file */
+
 #define NUM_RELCACHE_ENTRY ((PAGESIZE-PGTAIL_SPACE-(BITMS_NUM*sizeof(unsigned int)))/MR_RELCATENTRYSIZE)
 
 //************************************************************
@@ -53,9 +54,14 @@ typedef struct recid {
 /* Page Structure */
 typedef struct ps {
 //	unsigned  char slotmap[BITMS_NUM];
-	unsigned 	pid;
 	char contents [PAGESIZE];
 	} Page;
+
+typedef struct gtps {
+		//	unsigned  char slotmap[BITMS_NUM];
+			unsigned 	pid;
+			char contents [PAGESIZE];
+			} GtPage;
 
 typedef struct psrelcat {
 		
@@ -100,6 +106,7 @@ struct pageBuffer
 	ps[MR_PGPERREL];
 }
 */
+/*
 struct buffCat
 {
 	//char relName[RELNAME];//implicitly known
@@ -107,3 +114,4 @@ struct buffCat
 	unsigned gtpage;
 	int dirty;
 };
+*/
