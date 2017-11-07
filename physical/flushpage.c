@@ -1,10 +1,11 @@
+/*
 #include "../include/defs.h"
 #include "../include/error.h"
 #include "../include/globals.h"
 #include "../include/mrdtypes.h"
 #include <stdio.h>
 //relCache=2;//just for testing remove it compulsorily
-/*
+
 FlushPage(int relNum,unsigned pgid)
 {
     int len;

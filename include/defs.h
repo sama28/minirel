@@ -5,7 +5,7 @@
 		CONSTANTS
 *************************************************************/
 #include<stdio.h>
-#define PAGESIZE			1024				/* number of bytes in a page */
+#define PAGESIZE			3791				/* number of bytes in a page */
 #define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
 #define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
 #define PGTAIL_SPACE		4 				//sapce always left blanks for safety
@@ -20,8 +20,8 @@
 #define	OK			0		/* return codes */
 #define NOTOK		-1
 
-#define MR_RELCAT_BITMS_NUM   ((PAGESIZE-PGTAIL_SPACE)/(8*MR_RELCAT_REC_SIZE+1)) 
-#define MR_ATTRCAT_BITMS_NUM  ((PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1))
+#define MR_RELCAT_BITMS_NUM   (((PAGESIZE-PGTAIL_SPACE)/(8*MR_RELCAT_REC_SIZE+1))+1) 
+#define MR_ATTRCAT_BITMS_NUM  (((PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1))+1)
 #define MR_RELCAT_REC_SIZE 58
 #define	MR_ATTRCAT_REC_SIZE 42
 #define MR_RELCATENTRYSIZE 58

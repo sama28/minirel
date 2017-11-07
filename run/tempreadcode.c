@@ -9,7 +9,7 @@
 int relCacheIndex=2;//temporary definition remove it ones ameya changes reflect
 int relNum =1;
 //int pid=1;
-int pid=0;
+int pid=5;
 relCacheEntry relCache[10];
 
 main()
@@ -19,7 +19,7 @@ main()
 char tempbuff[3*PAGESIZE];
 
 //-------------------------------------------
-int i;
+int i,ret;
 gPgTable[relNum].pid=1;
 relCache[1].dirty=0;
 
@@ -77,8 +77,7 @@ relCache[1].attrHead;
                 if(fread(gPgTable[relNum].contents,PAGESIZE,1,relCache[relNum].relFile) > 0)
                 {
                     gPgTable[relNum].pid=pid;
-                    //printf("%s",gPgTable[relNum].contents);
-                    
+                    //printf("%s",gPgTable[relNum].contents);  
                   int lwrlm=0;
                   int uprlm=PAGESIZE;
                   printf("\n\ncontent of the whole file\n");
@@ -90,7 +89,7 @@ relCache[1].attrHead;
                 }
                 else{
 
-                    printf("\nunable to read........");
+                    printf("\nunable to read page %d of relNum %d........",pid,relNum);
                 }
            
             }        

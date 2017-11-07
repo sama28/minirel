@@ -65,7 +65,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 		s[9]=sizeof(numrecs);
 	//-------------------------------------------------
 		//s[4]=sizeof(pg.slotmap);//bitmap size priveously used
-		bitmssize=(PAGESIZE-PGTAIL_SPACE)/(8*MR_RELCAT_REC_SIZE+1);
+		bitmssize=MR_RELCAT_BITMS_NUM;//(PAGESIZE-PGTAIL_SPACE)/(8*MR_RELCAT_REC_SIZE+1);
 		s[4]=bitmssize;
 		//----------------this memory space wastage (in array s[7]) could be saved -------
 		
@@ -88,7 +88,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 		recid.pid=0;		//this shows 1st atrribute of this relation(relcat) is at page 0; 
 		recid.slotnum=0;	////this shows 1s(t atrribute of this relation(relcat) is at slotnum=0; in attrcat 
 		recLength=s[0]+s[1]+s[2]+s[3]+s[5]+s[6]+s[8]+s[9];		
-		recPerPg=s[4]*8;//(PAGESIZE-PGTAIL_SPACE-s[4])/recLength;
+		recPerPg=(PAGESIZE-PGTAIL_SPACE-s[4])/recLength;//s[4]*8;
 		//recPerPg=(PAGESIZE - (space intentionally left blank in ech page) -bitmap size)/recLemgth
 		
 		//printf("\n s0 %d s1 %d s2 %d s3 %d s4 %d recLength = %d,recPerPg=%d",s[0],s[1],s[2],s[3],s[4],recLength,recPerPg);
@@ -256,7 +256,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			type=DTSTRING;
 
 			//-----------------------------------------------------------
-			s[4]=(PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1);//bitmap size in byte
+			s[4]=MR_ATTRCAT_BITMS_NUM;//(PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1);//bitmap size in byte
 			//----------------------------------------------------------------
 			fseek(fda,s[4],SEEK_SET);//setting fd to 1st record slot of attrcat
 			fwrite(name,as[0],1,fda);
