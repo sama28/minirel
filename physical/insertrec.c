@@ -43,10 +43,17 @@ void getPath(char* path,char* filename){
 }
 
 InsertRec(int relNum, char *rec){
-    printf("reached insertrec");
+    //printf("reached insertrec");
+    FILE *fp;
     char path[255];
     getPath(path,relCache[relNum].relName);
-    FILE *fp=fopen(path,"rb+");
+    if(!strcmp("relcat",relCache[relNum].relName) || !strcmp("attrcat",relCache[relNum].relName)){
+        fp=fopen(path,"rb+");
+    }
+    else{
+        fp=relCache[relNum].relFile;
+    }
+    
     if(fp!=NULL){
         
         unsigned int slotArray[8];
@@ -81,7 +88,7 @@ InsertRec(int relNum, char *rec){
                     tmp=slotByte;
                     slot=bread_int(&gPgTable[relNum].contents,1,&tmp);
                     getBinary(&slotArray,slot);
-                    printf("%d",slot);
+                    //printf("%d",slot);
                     for(int j=0;j<8 && slotIndex==-1;j++){
                         //makeprintf("for2%d\n",slotByte*8+j);
                         if(slotArray[j]==0){
@@ -104,21 +111,21 @@ InsertRec(int relNum, char *rec){
             }
         }
         
-        printf("pagenum%d\nslotByte%d\nslotIndex%d\nrecordnum%d\n",pagenum,slotByte,slotIndex,slotByte*8+slotIndex);
+        //printf("pagenum%d\nslotByte%d\nslotIndex%d\nrecordnum%d\n",pagenum,slotByte,slotIndex,slotByte*8+slotIndex);
         
         //printf("%d\n",NUM_SLOTS+(slotByte*8+slotIndex)*relCache[relNum].recLength);
         newslot=getDecimal(&slotArray);
         write_this_slot=newslot;
-        printf("%d",write_this_slot);
+        //printf("%d",write_this_slot);
         offset=slotByte;
         gPgTable[relNum].contents[slotByte]=write_this_slot;
         offset=NUM_SLOTS+(slotByte*8+slotIndex)*relCache[relNum].recLength;
-        printf("offset%d\n",offset+relCache[relNum].recLength);
+        //printf("offset%d\n",offset+relCache[relNum].recLength);
         for(int i=0;i<relCache[relNum].recLength;i++)
             gPgTable[relNum].contents[i+offset]=rec[i];
-        for(int j=0;j<PAGESIZE;j++)
-        printf("%x",gPgTable[relNum].contents[j]);
-        printf("pagenum%d",pagenum);
+        //for(int j=0;j<PAGESIZE;j++)
+        //printf("%x",gPgTable[relNum].contents[j]);
+        //printf("pagenum%d",pagenum);
         
         fseek(fp,PAGESIZE*pagenum,SEEK_SET);
         fwrite(&gPgTable[relNum].contents,PAGESIZE,1,fp);
@@ -126,7 +133,6 @@ InsertRec(int relNum, char *rec){
             //relCache[relNum].numPgs++;
         }
         fflush(fp);
-        fclose(fp);
         if(!strcmp("relcat",relCache[relNum].relName) || !strcmp("attrcat",relCache[relNum].relName)){
             struct stat st;
             mode_t mode;

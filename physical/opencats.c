@@ -119,6 +119,7 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     relCache[relCacheIndex].relFile=relcatFile;
     relCache[relCacheIndex].dirty='c';
     relCache[relCacheIndex].attrHead=NULL;
+    relCache[relCacheIndex].valid='c';
     printf("%s\n%x\n%x\n%x\n%x\n%x\n%x\n%x\n%c\n",relCache[0].relName,relCache[0].recLength,relCache[0].recPerPg,relCache[0].numPgs,relCache[0].numRecs,relCache[0].numAttrs,relCache[0].Rid.pid,relCache[0].Rid.slotnum,relCache[0].dirty);
     relCacheIndex++;
 
@@ -129,11 +130,12 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
     relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
     relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
-    relCache[relCacheIndex].Rid.pid=1;
+    relCache[relCacheIndex].Rid.pid=0;
     relCache[relCacheIndex].Rid.slotnum=1;
     relCache[relCacheIndex].relFile=relcatFile;
     relCache[relCacheIndex].dirty='c';
     relCache[relCacheIndex].attrHead=NULL;
+    relCache[relCacheIndex].valid='c';
     printf("%s\n%x\n%x\n%x\n%x\n%x\n%x\n%x\n%c\n",relCache[1].relName,relCache[1].recLength,relCache[1].recPerPg,relCache[1].numPgs,relCache[1].numRecs,relCache[1].numAttrs,relCache[1].Rid.pid,relCache[1].Rid.slotnum,relCache[1].dirty);
     
     fseek(attrcatFile,attrcatRid.pid*PAGESIZE,SEEK_SET);
@@ -163,11 +165,11 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
     printf("%d",relcat_index);
     int howmuchRec;
-    if(relCache[0].numPgs==1){
+    if(relCache[0].numRecs<20){
         howmuchRec=relCache[0].numRecs;
     }
-    else if(relCache[0].numPgs>1){
-        howmuchRec=(PAGESIZE-PGTAIL_SPACE-MR_RELCAT_BITMS_NUM)/58;
+    else{
+        howmuchRec=20;
     }
     for (int i=relCacheIndex;i<howmuchRec;i++){
         relCacheIndex++;
@@ -199,6 +201,7 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
         relCache[i].Rid.slotnum=0;
         relCache[i].relFile=relcatFile;
         relCache[i].dirty='c';
+        relCache[relCacheIndex].valid='c';
     }
 }
 
