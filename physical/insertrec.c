@@ -65,10 +65,12 @@ InsertRec(int relNum, char *rec){
                 isNewpage=1;
                 for(int i=0;i<sizeof(gPgTable[relNum].contents);i++)
                 gPgTable[relNum].contents[i]=0;
+                gPgTable[relNum].pid=relCache[relNum].numPgs;   
             }
             else{
                 fseek(fp,PAGESIZE*pagenum,SEEK_SET);
-                fread(&gPgTable[relNum].contents,PAGESIZE,1,fp);   
+                fread(&gPgTable[relNum].contents,PAGESIZE,1,fp);
+                gPgTable[relNum].pid=pagenum;   
             }
             //for(int j=0;j<PAGESIZE;j++)
             //printf("%02x",gPgTable[relNum].contents[j]);

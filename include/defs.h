@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include<errno.h>
-#define PAGESIZE			3791				/* number of bytes in a page */
+#define PAGESIZE			2048				/* number of bytes in a page */
 #define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
 #define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
 #define PGTAIL_SPACE		4 				//sapce always left blanks for safety
@@ -67,7 +67,7 @@ typedef struct ps {
 typedef struct gtps {
 		//	unsigned  char slotmap[BITMS_NUM];
 			unsigned 	pid;
-			char contents [PAGESIZE+1];
+			unsigned char contents [PAGESIZE+1];
 			} GtPage;
 
 typedef struct psrelcat {
