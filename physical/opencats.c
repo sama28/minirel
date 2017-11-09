@@ -1,4 +1,3 @@
-/*
 #include "../include/defs.h"
 #include "../include/error.h"
 #include "../include/globals.h"
@@ -43,14 +42,14 @@ struct attrList* returnAttrNode(struct attrList* attrListHead,int i){
     }
     return tmp;
 }
-
+/*
 void cachePopulate2(FILE* relcatFile, FILE* attrcatFile){
     int size=fileSize(relcatFile);
 
     relCacheIndex++;
     fseek(relcatFile,0,SEEK_SET);
-    fseek(relcatFile,BITMS_NUM*sizeof(unsigned int),SEEK_SET);
-    fseek(relcatFile,58*2,SEEK_CUR);
+    fseek(relcatFile,MR_RELCAT_BITMS_NUM,SEEK_SET);
+    fseek(relcatFile,MR_RELCAT_REC_SIZE*2,SEEK_CUR);
 
     fseek(attrcatFile,0,SEEK_SET);
     int smallFile=(size-PGTAIL_SPACE-BITMS_NUM*sizeof(unsigned int))/sizeof(struct relList);
@@ -68,7 +67,7 @@ void cachePopulate2(FILE* relcatFile, FILE* attrcatFile){
         fread(&attrcatRid.slotnum,4,1,relcatFile);//(attr0rid)recid in attrcat having relation's first attr entry
         
         fseek(attrcatFile,attrcatRid.pid*PAGESIZE,SEEK_SET);//Seek to page where first attribute entry for relation is present.
-        fseek(attrcatFile,BITMS_NUM*sizeof(unsigned int),SEEK_CUR);//Skip bitmap slot.
+        fseek(attrcatFile,MR_ATTRCAT_BITMS_NUM,SEEK_CUR);//Skip bitmap slot.
         fseek(attrcatFile,attrcatRid.slotnum*relCache[1].recLength,SEEK_CUR);
 
         unsigned int offset,length;
@@ -92,77 +91,120 @@ void cachePopulate2(FILE* relcatFile, FILE* attrcatFile){
     }
     printf("%d",relCacheIndex);
 }
+*/
+
 
 void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
-    
-
-    fseek(relcatFile,BITMS_NUM*sizeof(unsigned int),SEEK_CUR);
-    fread(&relCache[relCacheIndex].relName,32,1,relcatFile);
-    fread(&relCache[relCacheIndex].recLength,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].recPerPg,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].numPgs,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].numRecs,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].numAttrs,2,1,relcatFile);
+    int relcat_index=0,attrcat_index=0,fsize=fileSize(relcatFile);;
+    unsigned int offset,length;
+    unsigned short type;
+    char attrName[ATTRLEN];
+    fread(&relcat_page,sizeof(relcat_page),1,relcatFile);
+    //for (int i=0;i<PAGESIZE/4;i++)
+      //  printf("%x",relcat_page[i]);
+    relcat_index+=MR_RELCAT_BITMS_NUM;
+    unsigned char tmp[32];
+    bread_string(relcat_page,32,&relcat_index,tmp);
+    strcpy(relCache[relCacheIndex].relName,tmp);
+    relCache[relCacheIndex].recLength=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].recPerPg=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
     struct recid attrcatRid;
-    fread(&attrcatRid.pid,4,1,relcatFile);//(attr0pid)pageid of page in attrcat havinf relation's first attr entry
-    fread(&attrcatRid.slotnum,4,1,relcatFile);//(attr0rid)recid in attrcat having relation's first attr entry
+    attrcatRid.pid=bread_int(relcat_page,4,&relcat_index);
+    attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
     relCache[relCacheIndex].Rid.pid=0;
     relCache[relCacheIndex].Rid.slotnum=0;
     relCache[relCacheIndex].relFile=relcatFile;
     relCache[relCacheIndex].dirty='c';
     relCache[relCacheIndex].attrHead=NULL;
     printf("%s\n%x\n%x\n%x\n%x\n%x\n%x\n%x\n%c\n",relCache[0].relName,relCache[0].recLength,relCache[0].recPerPg,relCache[0].numPgs,relCache[0].numRecs,relCache[0].numAttrs,relCache[0].Rid.pid,relCache[0].Rid.slotnum,relCache[0].dirty);
-    
-
     relCacheIndex++;
-    fread(&relCache[relCacheIndex].relName,32,1,relcatFile);
-    fread(&relCache[relCacheIndex].recLength,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].recPerPg,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].numPgs,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].numRecs,4,1,relcatFile);
-    fread(&relCache[relCacheIndex].numAttrs,2,1,relcatFile);
+
+    bread_string(relcat_page,32,&relcat_index,tmp);
+    strcpy(relCache[relCacheIndex].relName,tmp);
+    relCache[relCacheIndex].recLength=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].recPerPg=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
+    relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
     relCache[relCacheIndex].Rid.pid=1;
     relCache[relCacheIndex].Rid.slotnum=1;
     relCache[relCacheIndex].relFile=relcatFile;
     relCache[relCacheIndex].dirty='c';
     relCache[relCacheIndex].attrHead=NULL;
     printf("%s\n%x\n%x\n%x\n%x\n%x\n%x\n%x\n%c\n",relCache[1].relName,relCache[1].recLength,relCache[1].recPerPg,relCache[1].numPgs,relCache[1].numRecs,relCache[1].numAttrs,relCache[1].Rid.pid,relCache[1].Rid.slotnum,relCache[1].dirty);
-
-    fseek(attrcatFile,attrcatRid.pid*PAGESIZE,SEEK_SET);//Seek to page where first attribute entry for relation is present.
-    fseek(attrcatFile,BITMS_NUM*sizeof(unsigned int),SEEK_CUR);//Skip bitmap slot.
-    fseek(attrcatFile,attrcatRid.slotnum*relCache[1].recLength,SEEK_CUR);
-    int size=fileSize(attrcatFile);
     
-    unsigned int offset,length;
-    unsigned short type;
-    char attrName[ATTRLEN];
+    fseek(attrcatFile,attrcatRid.pid*PAGESIZE,SEEK_SET);
+    fread(&attrcat_page,sizeof(attrcat_page),1,attrcatFile);
+    attrcat_index+=MR_ATTRCAT_BITMS_NUM+attrcatRid.slotnum*relCache[1].recLength;
     for(int j=0;j<2;j++){
         struct attrList* attrListHead=NULL;
         for(int i=0;i<relCache[j].numAttrs;i++){
-            fread(&attrName,32,1,attrcatFile);
-            fread(&offset,4,1,attrcatFile);
-            fread(&length,4,1,attrcatFile);
-            fread(&type,2,1,attrcatFile);
+            bread_string(attrcat_page,32,&attrcat_index,tmp);
+            strcpy(attrName,tmp);
+            offset=bread_int(attrcat_page,4,&attrcat_index);
+            length=bread_int(attrcat_page,4,&attrcat_index);
+            type=bread_int(attrcat_page,2,&attrcat_index);
             printf("/nattrcat dataread is:-%s %u %u %u\n",attrName,offset,length,type);
             attrListHead=addAttrListNode(attrListHead,attrName,offset,length,type);
         }
         relCache[j].attrHead=attrListHead;
     }
-    
-    
+    /* Print attribute cache
     for(int j=0;j<2;j++){
-    for(int i=0;i<relCache[j].numAttrs;i++){
-        struct attrList* tmp=returnAttrNode(relCache[j].attrHead,i);
-        printf("%s %u %u %u\n",tmp->attrName,tmp->offset,tmp->length,tmp->type);
-    }printf("\n");}
-
-    fread(&attrcatRid.pid,4,1,relcatFile);
-    fread(&attrcatRid.slotnum,4,1,relcatFile);
-    cachePopulate2(relcatFile,attrcatFile);
+        for(int i=0;i<relCache[j].numAttrs;i++){
+            struct attrList* tmp=returnAttrNode(relCache[j].attrHead,i);
+            printf("%s %u %u %u\n",tmp->attrName,tmp->offset,tmp->length,tmp->type);
+        }printf("\n");}
+    */
+    attrcatRid.pid=bread_int(relcat_page,4,&relcat_index);
+    attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
+    printf("%d",relcat_index);
+    int howmuchRec;
+    if(relCache[0].numPgs==1){
+        howmuchRec=relCache[0].numRecs;
+    }
+    else if(relCache[0].numPgs>1){
+        howmuchRec=(PAGESIZE-PGTAIL_SPACE-MR_RELCAT_BITMS_NUM)/58;
+    }
+    for (int i=relCacheIndex;i<howmuchRec;i++){
+        relCacheIndex++;
+        bread_string(relcat_page,32,&relcat_index,tmp);
+        strcpy(relCache[relCacheIndex].relName,tmp);
+        relCache[relCacheIndex].recLength=bread_int(relcat_page,4,&relcat_index);
+        relCache[relCacheIndex].recPerPg=bread_int(relcat_page,4,&relcat_index);
+        relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
+        relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
+        relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
+        attrcatRid.pid=bread_int(relcat_page,4,&relcat_index);
+        attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
+        attrcat_index=0;
+        attrcat_index+=attrcatRid.pid*PAGESIZE;
+        fread(&attrcat_page,sizeof(attrcat_page),1,attrcatFile);
+        attrcat_index+=MR_ATTRCAT_BITMS_NUM+attrcatRid.slotnum*relCache[1].recLength;
+        struct attrList* attrListHead=NULL;
+        for(int j=0;j<relCache[relCacheIndex].numAttrs;i++){
+            bread_string(attrcat_page,32,&attrcat_index,tmp);
+            strcpy(attrName,tmp);
+            offset=bread_int(attrcat_page,4,&attrcat_index);
+            length=bread_int(attrcat_page,4,&attrcat_index);
+            type=bread_int(attrcat_page,2,&attrcat_index);
+            //printf("/nattrcat dataread is:-%s %u %u %u\n",attrName,offset,length,type);
+            attrListHead=addAttrListNode(attrListHead,attrName,offset,length,type);
+        }
+        relCache[i].attrHead=attrListHead;
+        relCache[i].Rid.pid=0;
+        relCache[i].Rid.slotnum=0;
+        relCache[i].relFile=relcatFile;
+        relCache[i].dirty='c';
+    }
 }
 
 OpenCats()
 {
+    printf("reached opencat");
     int flag=1,size; 
     unsigned int slot_buffer[BITMS_NUM*sizeof(unsigned int)],*buffer;
     char path1[MAX_PATH_LENGTH],*c,*d,path2[MAX_PATH_LENGTH];
@@ -183,16 +225,11 @@ OpenCats()
         fread(buffer,sizeof(unsigned int),PAGESIZE/sizeof(unsigned int),relcatFile);
         size=fileSize(relcatFile);
         for(int i=0;i<size/(sizeof(unsigned int));i++)
-            printf("%x\n",buffer[i]);
+            printf("%x\n",buffer[i]);*/
         
         //fread(&slot_buffer,BITMS_NUM*sizeof(unsigned int),1,relcatFile);
         
         cachePopulate1(relcatFile,attrcatFile);
-
-        
-        
-        
-
     }
     else if(errno){
         printf("%s",strerror(errno));
@@ -209,6 +246,5 @@ OpenCats()
           printf("\n---------------------------------------------------\n");
           printf("Error opening database.\n%s---------------------------\n",strerror(errno));
           printf("\n---------------------------------------------------\n");
-      }
+      }*/
 }
-*/

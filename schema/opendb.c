@@ -33,8 +33,9 @@ char	**argv;
       printf("Database %s is opened successfully.---------------------\n",MR_CURR_DB);
       printf("\n---------------------------------------------------\n");
       
-      //OpenCats();
-
+      OpenCats();
+      unsigned char a[58]="absdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghj";
+      InsertRec(0,&a);
     }
     else{
       printf("\n---------------------------------------------------\n");
@@ -49,4 +50,5 @@ char	**argv;
   }
   return 0;
   printf("");
+  return 0;
 }
