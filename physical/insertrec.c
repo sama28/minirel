@@ -61,21 +61,21 @@ InsertRec(int relNum, char *rec){
             slotByte=-1;
             if(pagenum+1>relCache[relNum].numPgs){
                 isNewpage=1;
-                for(int i=0;i<sizeof(pages[relNum]);i++)
-                    pages[relNum][i]=0;
+                for(int i=0;i<sizeof(gPgTable[relNum].contents);i++)
+                gPgTable[relNum].contents[i]=0;
             }
             else{
                 fseek(fp,PAGESIZE*pagenum,SEEK_SET);
-                fread(&pages[relNum],PAGESIZE,1,fp);   
+                fread(&gPgTable[relNum].contents,PAGESIZE,1,fp);   
             }
             for(int j=0;j<PAGESIZE;j++)
             //printf("%02x",pages[relNum][j]);
             for (int i=0;i<NUM_SLOTS && slotByte==-1;i++){
                 //printf("for1\t%d\n",slotByte);
-                if(pages[relNum][i]!=0xff){
+                if(gPgTable[relNum].contents[i]!=0xff){
                     slotByte=i;   
                     tmp=slotByte;
-                    slot=bread_int(&pages[relNum],1,&tmp);
+                    slot=bread_int(&gPgTable[relNum].contents,1,&tmp);
                     getBinary(&slotArray,slot);
                     printf("%d",slot);
                     for(int j=0;j<8 && slotIndex==-1;j++){
@@ -110,16 +110,16 @@ InsertRec(int relNum, char *rec){
         write_this_slot=newslot;
         printf("%d",write_this_slot);
         offset=slotByte;
-        pages[relNum][slotByte]=write_this_slot;
+        gPgTable[relNum].contents[slotByte]=write_this_slot;
         offset=NUM_SLOTS+(slotByte*8+slotIndex)*relCache[relNum].recLength;
         for(int i=0;i<relCache[relNum].recLength-1;i++)
-            pages[relNum][i+offset]=rec[i];
+            gPgTable[relNum].contents[i+offset]=rec[i];
         //for(int j=0;j<PAGESIZE;j++)
         //printf("%x",pages[relNum][j]);
         printf("pagenum%d",pagenum);
         
         fseek(fp,PAGESIZE*pagenum,SEEK_SET);
-        fwrite(&pages[relNum],PAGESIZE,1,fp);
+        fwrite(&gPgTable[relNum].contents,PAGESIZE,1,fp);
         if(isNewpage){
             relCache[relNum].numPgs++;
         }
