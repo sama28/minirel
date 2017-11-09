@@ -1,4 +1,3 @@
-/*
 //------cumpulsory header--------------
 #include "../include/defs.h"
 #include "../include/error.h"
@@ -10,17 +9,17 @@
 int relCacheIndex=2;//temporary definition remove it ones ameya changes reflect
 int relNum =1;
 //int pid=1;
-int pid=0;
+int pid=5;
 relCacheEntry relCache[10];
 
-ReadPage(int relNum,unsigned pid)
+main()
 {
 //-------------------------------------
 //temporary---
 char tempbuff[3*PAGESIZE];
 
 //-------------------------------------------
-int i;
+int i,ret;
 gPgTable[relNum].pid=1;
 relCache[1].dirty=0;
 
@@ -49,7 +48,7 @@ relCache[1].attrHead;
 //----------------------------------------
 
 
-/*
+
 
 //----------------------------code part-----------------------------
 
@@ -78,8 +77,7 @@ relCache[1].attrHead;
                 if(fread(gPgTable[relNum].contents,PAGESIZE,1,relCache[relNum].relFile) > 0)
                 {
                     gPgTable[relNum].pid=pid;
-                    //printf("%s",gPgTable[relNum].contents);
-                    
+                    //printf("%s",gPgTable[relNum].contents);  
                   int lwrlm=0;
                   int uprlm=PAGESIZE;
                   printf("\n\ncontent of the whole file\n");
@@ -91,7 +89,7 @@ relCache[1].attrHead;
                 }
                 else{
 
-                    printf("\nunable to read........");
+                    printf("\nunable to read page %d of relNum %d........",pid,relNum);
                 }
            
             }        
@@ -125,4 +123,24 @@ int isPgInBuff(int relNum,unsigned pgid )
     
     return 0;
 }
-*/
+
+FlushPage(int relNum,unsigned pgid)
+{
+    int len;
+    //assuming file is opened in ab+ mode directly write 
+    //printf("insigth flush...");
+    fseek(relCache[relNum].relFile,PAGESIZE*pgid,SEEK_SET);
+    //fseek(relCache[relNum].relFile,0,SEEK_SET);
+    len=fwrite(gPgTable[relNum].contents,1,PAGESIZE,relCache[relNum].relFile);
+    printf("\n\nlen:-%d\n\n",len);
+    if(len>0)//actually condition shloud be ==PAGESIZE
+    {
+        fflush(relCache[relNum].relFile);
+        relCache[relNum].dirty=0;
+        printf("\nflushing old page:-\n\n%s",gPgTable[relNum].contents);
+    }
+    else{
+
+        printf("\n\nflushpage():->there is problem in flushing the page");
+    }
+}

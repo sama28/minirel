@@ -23,8 +23,8 @@
 int main()
 {
 		PageRelCat pg;
-		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/sam101/catalog/relcat";
-		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/sam101/catalog/attrcat";
+		char path[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/nov72/catalog/relcat";
+		char path1[MAX_PATH_LENGTH]="/home/samadhan/Desktop/git/minirel/data/nov72/catalog/attrcat";
 		//chmod(path,S_IRUSR|S_IWUSR|S_IRUSR|S_IXUSR|O_DIRECTORY);			
 		chmod(path,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
 		chmod(path1,S_IRUSR|S_IWUSR| S_ISVTX|O_DIRECTORY);
@@ -70,6 +70,7 @@ int main()
 				fread(&e1,1,1,fd);
 				printf("\n%x",e1);
 			}
+			
 
 			fread(d,32,1,fd);
 			fread(&e,4,1,fd);
@@ -114,7 +115,7 @@ int main()
 					fread(&e1,1,1,fda);
 					printf("\n%x",e1);
 				}
-				atcatofst=MR_ATTRCAT_BITMS_NUM;//(PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1);
+				atcatofst=(PAGESIZE-PGTAIL_SPACE)/(8*MR_ATTRCAT_REC_SIZE+1);
 				fseek(fda,atcatofst,SEEK_SET);
 			for(i=0;i<12;i++)
 			{

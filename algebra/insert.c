@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 
-Insert (argc, argv)
+int Insert (argc, argv)
 int	argc;
 char	**argv;
 
