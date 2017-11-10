@@ -132,7 +132,7 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
     relCache[relCacheIndex].Rid.pid=0;
     relCache[relCacheIndex].Rid.slotnum=1;
-    relCache[relCacheIndex].relFile=relcatFile;
+    relCache[relCacheIndex].relFile=attrcatFile;
     relCache[relCacheIndex].dirty='c';
     relCache[relCacheIndex].attrHead=NULL;
     relCache[relCacheIndex].valid='c';
@@ -199,7 +199,7 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
         relCache[i].attrHead=attrListHead;
         relCache[i].Rid.pid=0;
         relCache[i].Rid.slotnum=0;
-        relCache[i].relFile=relcatFile;
+        relCache[i].relFile=NULL;
         relCache[i].dirty='c';
         relCache[relCacheIndex].valid='c';
     }

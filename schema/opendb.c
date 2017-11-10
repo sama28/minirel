@@ -34,8 +34,8 @@ char	**argv;
       printf("\n---------------------------------------------------\n");
       
       OpenCats();
-      unsigned char a[58]="absdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghj";
-      InsertRec(0,&a);
+      //unsigned char a[59]="absdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghj";
+      //InsertRec(0,&a);
     }
     else{
       printf("\n---------------------------------------------------\n");
