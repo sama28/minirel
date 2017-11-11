@@ -10,15 +10,15 @@ int	argc;
 char	**argv;
 
 {
-
-    /* print command line arguments */
-    short	k;		/* iteration counter	    */
-    printf ("%s:\n", argv[0]);
-    for (k = 1 ; k < argc; ++k)
-	printf ("\targv[%d] = %s\n", k, argv[k]);
-
-     printf("Destroy \n");
-     return (OK);  /* all's fine */
+    unsigned char a[59]="absdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghjklabsdfghj";
+    InsertRec(0,&a);
+    struct recid rid;
+    rid.pid=0;
+    rid.slotnum=2;
+    DeleteRec(0,&rid);
+    unsigned char b[59]="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    rid.slotnum=3;
+    WriteRec(0,&b,&rid);
 }
 
 

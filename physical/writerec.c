@@ -7,10 +7,6 @@ WriteRec(int relNum,char* rec,Rid* rid){
     int offset,newslot,tmp,slotByte,slotIndex,slot,slotArray[8],maxRec,NUM_SLOTS=(((PAGESIZE-PGTAIL_SPACE)/(8*relCache[relNum].recLength+1))+1);
     maxRec=(PAGESIZE-PGTAIL_SPACE-NUM_SLOTS)/relCache[relNum].recLength;
     //printf("reclen%d",strlen(rec)-1);
-    if(strlen(rec)!=relCache[relNum].recLength){
-        printf("Invalid Record Format.\n");
-        return;
-    }
     if(rid->pid>relCache[relNum].numPgs-1){
         printf("Pid exceeds total pages in the file.\n");
         return;
@@ -41,8 +37,8 @@ WriteRec(int relNum,char* rec,Rid* rid){
         //for(int i=0;i<8;i++)
         //printf("%d",slotArray[i]);
         slotIndex=rid->slotnum%8;
-        printf("\n%d\n",slotIndex);
-        slotArray[slotIndex]=0;
+        //printf("\n%d\n",slotIndex);
+        slotArray[slotIndex]=1;
         newslot=getDecimal(&slotArray);
         write_this_slot=newslot;
         //printf("%d",write_this_slot);
@@ -52,8 +48,8 @@ WriteRec(int relNum,char* rec,Rid* rid){
         //printf("offset%d\n",offset+relCache[relNum].recLength);
         for(int i=0;i<relCache[relNum].recLength;i++)
             gPgTable[relNum].contents[i+offset]=rec[i];
-        for(int j=0;j<PAGESIZE;j++)
-        printf("%02x",gPgTable[relNum].contents[j]);
+        //for(int j=0;j<PAGESIZE;j++)
+        //printf("%02x",gPgTable[relNum].contents[j]);
         fseek(relCache[relNum].relFile,PAGESIZE*rid->pid,SEEK_SET);
         fwrite(&gPgTable[relNum].contents,PAGESIZE,1,relCache[relNum].relFile);
         fflush(relCache[relNum].relFile);

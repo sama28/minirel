@@ -8,12 +8,37 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
-
+int returnAttrNode(struct attrList* attrListHead,int i,struct attrList* source){
+  struct attrList* tmp,*tmp2;
+  int count=0,numNode=0;
+  tmp=attrListHead;
+  tmp2=attrListHead;
+  while(tmp2!=NULL){
+    tmp2=tmp2->next;numNode++;
+  }
+  //printf("numnodes%d\n",numNode);
+  while(tmp!=NULL && count<i){
+    tmp=tmp->next;count++;
+  }
+  if(i<numNode){
+    strcpy(source->attrName,tmp->attrName);
+    source->length=tmp->length;
+    source->offset=tmp->offset;
+    source->type=tmp->type;
+    source->next=tmp->next;
+    return 1;
+  }
+  else{
+    return 0;
+  }
+  
+}
 int OpenDB (argc, argv)
 int	argc;
 char	**argv;
 
 {
+  
   int flag=1,p;
   struct dirent *dp;
   char path[MAX_PATH_LENGTH],*c;

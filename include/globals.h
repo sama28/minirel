@@ -13,5 +13,3 @@ GtPage gPgTable[MAXOPEN];//global page table just collection of pages
 //unordered_map< string,unordered_map<unsigned,buffCat> > gtCat;
 unsigned int relCacheIndex;
 struct relList relCache[NUM_RELCACHE_ENTRY];
-unsigned char relcat_page[PAGESIZE+1];
-unsigned char attrcat_page[PAGESIZE+1];

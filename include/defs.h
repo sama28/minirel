@@ -6,12 +6,14 @@
 *************************************************************/
 #include<stdio.h>
 #include <stdio.h>
+#include<string.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include<errno.h>
+
 #define PAGESIZE			2048				/* number of bytes in a page */
 #define BITMS_NUM           (PAGESIZE/128)		//assuming a record is atleat 4 byte and one bitmap 												slot is of 4byte 
 #define	MAXRECORD			(32*BITMS_NUM) 	//since one bitmap slot can corresponds to 32 records
@@ -44,6 +46,7 @@
 #define MAX_PATH_LENGTH 255 						//length of absolute address of any file
 #define ATTRLEN		32
 #define MR_MAX_FILENAME_SIZE 255
+#define MAXSTRINGLEN 50
 //------------------------------------------------------------------------------------------------
 //------------bit map slot specific----------------------------------------------------------
 
@@ -82,6 +85,9 @@ typedef struct psattrcat {
 					char contents [MAXRECORD];
 } PageAttrCat;
 /*****************************************************************/
+struct recidArray{
+	struct recid Rid;
+};
 
 typedef struct relList{
 	char valid;
@@ -104,6 +110,7 @@ typedef struct attrList{
 	unsigned short type;
 	struct attrList* next;
 };
+
 /*
 struct pageBuffer
 {

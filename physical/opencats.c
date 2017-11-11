@@ -33,15 +33,7 @@ struct attrList* addAttrListNode(struct attrList* attrListHead,char attrName[],u
     return attrListHead;
 }
 
-struct attrList* returnAttrNode(struct attrList* attrListHead,int i){
-    struct attrList* tmp;
-    int count=0;
-    tmp=attrListHead;
-    while(tmp!=NULL && count<i){
-      tmp=tmp->next;count++;
-    }
-    return tmp;
-}
+
 /*
 void cachePopulate2(FILE* relcatFile, FILE* attrcatFile){
     int size=fileSize(relcatFile);
@@ -99,21 +91,21 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     unsigned int offset,length;
     unsigned short type;
     char attrName[ATTRLEN];
-    fread(&relcat_page,sizeof(relcat_page),1,relcatFile);
+    fread(&gPgTable[0].contents,sizeof(gPgTable[0].contents),1,relcatFile);
     //for (int i=0;i<PAGESIZE/4;i++)
-      //  printf("%x",relcat_page[i]);
+      //  printf("%x",gPgTable[0].contents[i]);
     relcat_index+=MR_RELCAT_BITMS_NUM;
     unsigned char tmp[32];
-    bread_string(relcat_page,32,&relcat_index,tmp);
+    bread_string(gPgTable[0].contents,32,&relcat_index,tmp);
     strcpy(relCache[relCacheIndex].relName,tmp);
-    relCache[relCacheIndex].recLength=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].recPerPg=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
+    relCache[relCacheIndex].recLength=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].recPerPg=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].numPgs=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].numRecs=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].numAttrs=bread_int(gPgTable[0].contents,2,&relcat_index);
     struct recid attrcatRid;
-    attrcatRid.pid=bread_int(relcat_page,4,&relcat_index);
-    attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
+    attrcatRid.pid=bread_int(gPgTable[0].contents,4,&relcat_index);
+    attrcatRid.slotnum=bread_int(gPgTable[0].contents,4,&relcat_index);
     relCache[relCacheIndex].Rid.pid=0;
     relCache[relCacheIndex].Rid.slotnum=0;
     relCache[relCacheIndex].relFile=relcatFile;
@@ -123,13 +115,13 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     printf("%s\n%x\n%x\n%x\n%x\n%x\n%x\n%x\n%c\n",relCache[0].relName,relCache[0].recLength,relCache[0].recPerPg,relCache[0].numPgs,relCache[0].numRecs,relCache[0].numAttrs,relCache[0].Rid.pid,relCache[0].Rid.slotnum,relCache[0].dirty);
     relCacheIndex++;
 
-    bread_string(relcat_page,32,&relcat_index,tmp);
+    bread_string(gPgTable[0].contents,32,&relcat_index,tmp);
     strcpy(relCache[relCacheIndex].relName,tmp);
-    relCache[relCacheIndex].recLength=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].recPerPg=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
-    relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
+    relCache[relCacheIndex].recLength=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].recPerPg=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].numPgs=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].numRecs=bread_int(gPgTable[0].contents,4,&relcat_index);
+    relCache[relCacheIndex].numAttrs=bread_int(gPgTable[0].contents,2,&relcat_index);
     relCache[relCacheIndex].Rid.pid=0;
     relCache[relCacheIndex].Rid.slotnum=1;
     relCache[relCacheIndex].relFile=attrcatFile;
@@ -139,20 +131,19 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     printf("%s\n%x\n%x\n%x\n%x\n%x\n%x\n%x\n%c\n",relCache[1].relName,relCache[1].recLength,relCache[1].recPerPg,relCache[1].numPgs,relCache[1].numRecs,relCache[1].numAttrs,relCache[1].Rid.pid,relCache[1].Rid.slotnum,relCache[1].dirty);
     
     fseek(attrcatFile,attrcatRid.pid*PAGESIZE,SEEK_SET);
-    fread(&attrcat_page,sizeof(attrcat_page),1,attrcatFile);
+    fread(&gPgTable[1].contents,sizeof(gPgTable[1].contents),1,attrcatFile);
     attrcat_index+=MR_ATTRCAT_BITMS_NUM+attrcatRid.slotnum*relCache[1].recLength;
     for(int j=0;j<2;j++){
-        struct attrList* attrListHead=NULL;
+        
         for(int i=0;i<relCache[j].numAttrs;i++){
-            bread_string(attrcat_page,32,&attrcat_index,tmp);
+            bread_string(gPgTable[1].contents,32,&attrcat_index,tmp);
             strcpy(attrName,tmp);
-            offset=bread_int(attrcat_page,4,&attrcat_index);
-            length=bread_int(attrcat_page,4,&attrcat_index);
-            type=bread_int(attrcat_page,2,&attrcat_index);
+            offset=bread_int(gPgTable[1].contents,4,&attrcat_index);
+            length=bread_int(gPgTable[1].contents,4,&attrcat_index);
+            type=bread_int(gPgTable[1].contents,2,&attrcat_index);
             printf("/nattrcat dataread is:-%s %u %u %u\n",attrName,offset,length,type);
-            attrListHead=addAttrListNode(attrListHead,attrName,offset,length,type);
+            relCache[j].attrHead=addAttrListNode(relCache[j].attrHead,attrName,offset,length,type);
         }
-        relCache[j].attrHead=attrListHead;
     }
     /* Print attribute cache
     for(int j=0;j<2;j++){
@@ -161,8 +152,8 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
             printf("%s %u %u %u\n",tmp->attrName,tmp->offset,tmp->length,tmp->type);
         }printf("\n");}
     */
-    attrcatRid.pid=bread_int(relcat_page,4,&relcat_index);
-    attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
+    attrcatRid.pid=bread_int(gPgTable[0].contents,4,&relcat_index);
+    attrcatRid.slotnum=bread_int(gPgTable[0].contents,4,&relcat_index);
     printf("%d",relcat_index);
     int howmuchRec;
     if(relCache[0].numRecs<20){
@@ -171,28 +162,29 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
     else{
         howmuchRec=20;
     }
+    /*
     for (int i=relCacheIndex;i<howmuchRec;i++){
         relCacheIndex++;
-        bread_string(relcat_page,32,&relcat_index,tmp);
+        bread_string(gPgTable[0].contents,32,&relcat_index,tmp);
         strcpy(relCache[relCacheIndex].relName,tmp);
-        relCache[relCacheIndex].recLength=bread_int(relcat_page,4,&relcat_index);
-        relCache[relCacheIndex].recPerPg=bread_int(relcat_page,4,&relcat_index);
-        relCache[relCacheIndex].numPgs=bread_int(relcat_page,4,&relcat_index);
-        relCache[relCacheIndex].numRecs=bread_int(relcat_page,4,&relcat_index);
-        relCache[relCacheIndex].numAttrs=bread_int(relcat_page,2,&relcat_index);
-        attrcatRid.pid=bread_int(relcat_page,4,&relcat_index);
-        attrcatRid.slotnum=bread_int(relcat_page,4,&relcat_index);
+        relCache[relCacheIndex].recLength=bread_int(gPgTable[0].contents,4,&relcat_index);
+        relCache[relCacheIndex].recPerPg=bread_int(gPgTable[0].contents,4,&relcat_index);
+        relCache[relCacheIndex].numPgs=bread_int(gPgTable[0].contents,4,&relcat_index);
+        relCache[relCacheIndex].numRecs=bread_int(gPgTable[0].contents,4,&relcat_index);
+        relCache[relCacheIndex].numAttrs=bread_int(gPgTable[0].contents,2,&relcat_index);
+        attrcatRid.pid=bread_int(gPgTable[0].contents,4,&relcat_index);
+        attrcatRid.slotnum=bread_int(gPgTable[0].contents,4,&relcat_index);
         attrcat_index=0;
         attrcat_index+=attrcatRid.pid*PAGESIZE;
-        fread(&attrcat_page,sizeof(attrcat_page),1,attrcatFile);
+        fread(&gPgTable[1].contents,sizeof(gPgTable[1].contents),1,attrcatFile);
         attrcat_index+=MR_ATTRCAT_BITMS_NUM+attrcatRid.slotnum*relCache[1].recLength;
         struct attrList* attrListHead=NULL;
         for(int j=0;j<relCache[relCacheIndex].numAttrs;i++){
-            bread_string(attrcat_page,32,&attrcat_index,tmp);
+            bread_string(gPgTable[1].contents,32,&attrcat_index,tmp);
             strcpy(attrName,tmp);
-            offset=bread_int(attrcat_page,4,&attrcat_index);
-            length=bread_int(attrcat_page,4,&attrcat_index);
-            type=bread_int(attrcat_page,2,&attrcat_index);
+            offset=bread_int(gPgTable[1].contents,4,&attrcat_index);
+            length=bread_int(gPgTable[1].contents,4,&attrcat_index);
+            type=bread_int(gPgTable[1].contents,2,&attrcat_index);
             //printf("/nattrcat dataread is:-%s %u %u %u\n",attrName,offset,length,type);
             attrListHead=addAttrListNode(attrListHead,attrName,offset,length,type);
         }
@@ -203,6 +195,7 @@ void cachePopulate1(FILE* relcatFile, FILE* attrcatFile){
         relCache[i].dirty='c';
         relCache[relCacheIndex].valid='i';
     }
+    */
 }
 
 OpenCats()

@@ -236,8 +236,8 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 
 			pg1.slotmap[0]=0xff;//hex=1111 1111 
 			pg1.slotmap[1]=0xf0;//1111 0000
-			fwrite(&(&pg)->slotmap[0],s[7],1,fda);	//writing bitmap
-			fwrite(&(&pg)->slotmap[1],s[7],1,fda);	//writing bitmap
+			fwrite(&(&pg1)->slotmap[0],s[7],1,fda);	//writing bitmap
+			fwrite(&(&pg1)->slotmap[1],s[7],1,fda);	//writing bitmap
 
 			for(i = 2 ;i<MR_ATTRCAT_BITMS_NUM;i++)
 			{
@@ -252,7 +252,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			strcpy(name,"relName");
 			//printf("\n\n it shoul be relName %s",name);
 			ofst=0;
-			attrl=7;
+			attrl=ATTRLEN;
 			type=DTSTRING;
 
 			//-----------------------------------------------------------
@@ -267,7 +267,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//second attribute
 			strcpy(name,"recLength");
 			ofst=1;
-			attrl=9;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+arecLength,SEEK_SET);//adjusting bit boundary;
@@ -279,7 +279,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//3rd attribute
 			strcpy(name,"recPerPg");
 			ofst=2;
-			attrl=8;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+2*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -291,7 +291,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//4th attribute
 			strcpy(name,"numPgs");
 			ofst=3;
-			attrl=6;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+3*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -303,7 +303,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//5th attribute
 			strcpy(name,"numRecs");
 			ofst=4;
-			attrl=7;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+4*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -315,7 +315,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//6th attribute
 			strcpy(name,"numAttrs");
 			ofst=5;
-			attrl=8;
+			attrl=2;
 			type=DTUNSIGNED_SHORT;
 
 			fseek(fda,s[4]+5*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -327,7 +327,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//7th attribute
 			strcpy(name,"attr0Pid");
 			ofst=6;
-			attrl=8;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+6*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -339,7 +339,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//8th attribute
 			strcpy(name,"attr0Slotnum");
 			ofst=7;
-			attrl=12;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+7*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -353,7 +353,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//1st attribute of attrcat
 			strcpy(name,"attrName");
 			ofst=0;
-			attrl=4;
+			attrl=ATTRLEN;
 			type=DTSTRING;
 
 			fseek(fda,s[4]+8*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -365,7 +365,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//2nd attribute
 			strcpy(name,"offset");
 			ofst=1;
-			attrl=6;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+9*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -377,7 +377,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//3rd attribute
 			strcpy(name,"length");
 			ofst=2;
-			attrl=6;
+			attrl=4;
 			type=DTUNSIGNED_INT;
 
 			fseek(fda,s[4]+10*arecLength,SEEK_SET);//adjusting bit boundary;
@@ -389,7 +389,7 @@ CreateCats(char *d)//d should be d=HOME/data/[dbname]/data
 			//4th attribute
 			strcpy(name,"type");
 			ofst=3;
-			attrl=4;
+			attrl=2;
 			type=DTSHORT;
 
 			fseek(fda,s[4]+11*arecLength,SEEK_SET);//adjusting bit boundary;
