@@ -15,6 +15,17 @@ void getSizedBin(int* z,int x,int size){
     
 }
 
+int doesFileExist(char* path){
+    if(access(path,0)==0){
+        //printf("File Exists");
+        return 1;
+    }
+    else{
+        //printf("File does not exist.");
+        return 0;
+    }
+    }
+
 void bwrite_int(unsigned char* tmp,int num,int size,int* init){
     int binArray[size*8],base,sum;
     getSizedBin(&binArray,num,size);
@@ -54,7 +65,13 @@ int isInputValid(int num,char **string){
     //strcpy(seen,string);
     for(int i=0;i<num;i=i+1)
     strcpy(seen[i],string[i]);
-    if(strlen(string[1])<=RELNAME){
+    char path[MAX_PATH_LENGTH];
+    getPath(path,string[1]);
+    if(doesFileExist(path)){
+        printf("Relation File Already Exists.\n");
+        return;
+    }
+    if(strlen(string[1])<=RELNAME && !doesFileExist(path)){//Add provision for checking if relation already exists.
         valid=valid & 1;
     }
     else{
@@ -95,6 +112,16 @@ int isInputValid(int num,char **string){
         }
     }
     //printf("%d",strlen(string[2]));
+    if(valid){
+        FILE* fp=fopen(path,"ab");
+        if(fp){
+            //printf("ban gayi");
+            fclose(fp);
+        }
+        else if(errno){
+            printf("%s",strerror(errno));
+        }
+    }
     return valid;
 }
 
@@ -194,12 +221,13 @@ char	**argv;
         //printf("\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",q,a1,a2,a3,a4,a5,a6,a7);
         InsertRec(0,record2);
         free(tmp);
+        printf("Relation Successfully Created\n");
     }
     else{
-        printf("Invalid");
+        printf("Invalid parameters for create function.");
     }
 
-    
+    return;
 }
 
 

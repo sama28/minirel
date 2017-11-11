@@ -37,6 +37,7 @@ void getPath(char* path,char* filename){
         strcpy(path,HOME_MINIREL);
         c=strcat(path,"/data/");
         c=strcat(c,MR_CURR_DB);
+        c=strcat(c,"/");
         c=strcat(c,filename);
         strcpy(path,c);
     }
